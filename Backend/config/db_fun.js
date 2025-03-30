@@ -1,4 +1,4 @@
-const { postgres } = require("../config/db");
+const { postgres } = require("./db");
 
 // Function to create a user
 const createUser = async (username, email, hashedPassword) => {
