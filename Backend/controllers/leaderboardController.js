@@ -3,18 +3,18 @@ const { postgres } = require("../config/db");
 // Function to fetch leaderboard data
 const get_leaderBoard = async () => {
     try {
-        const data1 = await postgres`
-            SELECT uh.userid, u.username, uh.points, uh.win, uh.loss, uh.draw 
-            FROM "userhistory2" uh
-            JOIN "users" u ON uh.userid = u.id
-            ORDER BY uh.points DESC, uh.win DESC;
-        `;
-
-        const data2=await postgres`
+        const data1=await postgres`
             SELECT uh.userid, u.username, uh.points
             FROM "userhistory1" uh
             JOIN "users" u ON uh.userid = u.id
             ORDER BY uh.points DESC;
+        `;
+
+        const data2 = await postgres`
+            SELECT uh.userid, u.username, uh.points, uh.win, uh.loss, uh.draw 
+            FROM "userhistory2" uh
+            JOIN "users" u ON uh.userid = u.id
+            ORDER BY uh.points DESC, uh.win DESC;
         `;
         
         // For debugging Will remove it later
