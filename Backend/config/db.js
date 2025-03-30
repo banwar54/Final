@@ -1,4 +1,4 @@
-const postgres = require("postgres");
+const pg = require("postgres");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -10,18 +10,18 @@ if (!process.env.DATABASE_URL) {
 }
 
 // Establish connection to postgres
-const sql = postgres(process.env.DATABASE_URL, {
+const postgres = pg(process.env.DATABASE_URL, {
     ssl: "require", 
 });
 
 //Check Connection
 const checkConnection = async () => {
     try {
-        await sql`SELECT 1`;
+        await postgres`SELECT 1`;
         console.log("Database connection successful");
     } catch (error) {
         console.error("Database connection failed:", error);
     }
 };
 
-module.exports = { sql, checkConnection };
+module.exports = { postgres, checkConnection };
