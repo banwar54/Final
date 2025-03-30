@@ -4,6 +4,7 @@ const http = require("http");
 const cors = require("cors");
 
 const authRoutes = require("../routes/authRoutes")
+const leaderboardRoutes = require("../routes/leaderboardRoutes")
 const { checkConnection } = require("../config/db");
 
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(cors());
 
 // Routes
 app.use("/auth", authRoutes);
+app.use("/leaderboard",leaderboardRoutes)
 
 // Base Route
 app.get("/", (req, res) => {
