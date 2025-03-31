@@ -6,7 +6,7 @@ const router = express.Router();
 // Check Ques Route
 router.get("/", async (req, res) => {
     res.send("Welcome to Ques Page");
-    const data = await getQuesData("9");
+    const data = await getQuesData("1");
     console.log(data);
 });
 

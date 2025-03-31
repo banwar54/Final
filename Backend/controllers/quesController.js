@@ -1,13 +1,10 @@
-const { postgres } = require("../config/db");
+const { getTopic, getQuestions } = require("../config/db_fun")
 
 // Fetch topic name and topic description
 const getTopicByTopicId = async (topicId) => {
     try {
         console.log(`Fetching topic for topic ID: ${topicId}`);
-        const data = await postgres`
-            SELECT * FROM topics
-            WHERE id = ${topicId};
-        `;
+        const data = await getTopic(topicId);
 
         if (!data || data.length === 0) {
             console.log("No Topic Found for topic ID: ${topicId}");
@@ -26,10 +23,7 @@ const getTopicByTopicId = async (topicId) => {
 const  getQuestionsByTopicId = async (topicId) => {
     try {
         console.log(`Fetching questions for topic ID: ${topicId}`);
-        const data = await postgres`
-            SELECT * FROM queoptn
-            WHERE topic_id = ${topicId};
-        `;
+        const data = await getQuestions(topicId);
 
         if (!data || data.length === 0) {
             console.log(`No questions found for topic ID: ${topicId}`);

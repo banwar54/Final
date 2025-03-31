@@ -17,4 +17,18 @@ const findUserByUsername = async (username) => {
     `;
 };
 
-module.exports = { createUser, findUserByUsername };
+const getTopic = async (topicId) => {
+    return postgres`
+        SELECT * FROM topics
+        WHERE id = ${topicId};
+    `;
+}
+
+const getQuestions = async (topicId) => {
+    return postgres`
+        SELECT * FROM queoptn
+        WHERE topic_id = ${topicId};
+    `;
+}
+
+module.exports = { createUser, findUserByUsername, getTopic, getQuestions };
