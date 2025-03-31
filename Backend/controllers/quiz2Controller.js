@@ -1,5 +1,5 @@
 const { v4: uuidv4 } = require("uuid");
-const { postgres } = require("../config/db");
+const { saveTwoPlayerSession } = require("../config/db_fun");
 const { fetchTopicData } = require("./quesController");
 
 let waitingQueue = [];
@@ -18,10 +18,7 @@ const saveSession = async (gameId, player1, player2, player1Score, player2Score)
     const result = player1Score > player2Score ? 1 : player2Score > player1Score ? 2 : 0;
 
     try {
-        await postgres`
-            INSERT INTO sessionspec (game_id, user1id, user2id, result) 
-            VALUES (${gameId}, ${player1}, ${player2}, ${result});
-        `;
+        await saveTwoPlayerSession(gameId, player1, player2, result);
         console.log(`Game session saved: GameID=${gameId}, Result=${result}`);
     } catch (error) {
         console.error("Error saving session:", error);

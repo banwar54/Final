@@ -53,18 +53,19 @@ const login = async (req, res) => {
         // Generate JWT Token
         const token = jwt.sign({ userId: user[0].id, username: user[0].username }, SECRET_KEY, { expiresIn: "1h" });
 
-        // res.status(200).json({ message: "Login successful!", token, user: { username: user[0].username, email: user[0].email }});
-
-        res.cookie('token',token,{
-            // httpOnly: true,  // Prevents JavaScript access (for security)
-            // secure: true,    // Ensures it's only sent over HTTPS (set to false for local testing)
-            // sameSite: 'Lax', // Adjust this if frontend and backend are on different domains
-            maxAge: 24 * 60 * 60 * 1000 // Expires in 1 day (adjust as needed)
+        res.status(200).json({ 
+            message: "Login successful!",
+            token,
+            user: { 
+                username: user[0].username,
+                email: user[0].email
+            }
         });
-        res.status(200).json({ message: "Login successful!", user: { username: user[0].username, email: user[0].email}});
-            
     } catch (error) {
-        res.status(500).json({ message: "Error logging in", error });
+        res.status(500).json({
+            message: "Error logging in",
+            error
+        });
     }
 };
 

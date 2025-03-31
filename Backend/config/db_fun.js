@@ -53,4 +53,29 @@ const getTwoPlayerLeaderboard =async() =>{
     `;
 }
 
-module.exports = { createUser, findUserByUsername, getTopicById, getQuestionsById, getSinglePlayerLeaderboard, getTwoPlayerLeaderboard };
+// Save Single Player Data
+const saveSinglePlayerSession=async (gameId, player1, result) =>{
+    postgres`
+            INSERT INTO sessionspec1 (game_id, user1id, result) 
+            VALUES (${gameId}, ${player1}, ${result});
+        `;
+}
+
+// Save Two Player Data
+const saveTwoPlayerSession=async (gameId, player1, player2, result) =>{
+    postgres`
+    INSERT INTO sessionspec2 (game_id, user1id, user2id, result) 
+            VALUES (${gameId}, ${player1}, ${player2}, ${result});
+        `;
+}
+
+module.exports = { 
+    createUser,
+    findUserByUsername,
+    getTopicById,
+    getQuestionsById,
+    getSinglePlayerLeaderboard,
+    getTwoPlayerLeaderboard,
+    saveSinglePlayerSession,
+    saveTwoPlayerSession,
+ };
