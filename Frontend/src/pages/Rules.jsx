@@ -3,7 +3,6 @@ import { Box, Typography } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../styles/Rules.css";
-import Cookies from "js-cookie";
 
 // Import assets
 import logo from "../images/swords.jpg";

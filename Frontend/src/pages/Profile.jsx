@@ -5,7 +5,6 @@ import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend
 } from "recharts";
-import Cookies from "js-cookie";
 
 // Import assets
 import logo from "../images/swords.jpg";

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../images/swords.jpg";
 import "../styles/Leaderboard.css";
-import Cookies from "js-cookie";
 
 const Leaderboard = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -12,37 +11,40 @@ const Leaderboard = () => {
   const [error, setError] = useState(null);
   const [activeLeaderboard, setActiveLeaderboard] = useState("multiplayer"); // Default to multiplayer
   const location = useLocation();
+  const navigate = useNavigate();
 
-    const handleLogout = () => {
-      localStorage.removeItem("token"); // Remove the authentication token
-      navigate("/login"); // Redirect to the login page
-    };
-    
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Remove the authentication token
+    navigate("/login"); // Redirect to the login page
+  };
 
   useEffect(() => {
     const fetchLeaderboardData = async () => {
       try {
         setIsLoading(true);
-        // Fetch multiplayer leaderboard
-        const multiplayerResponse = await fetch("http://localhost:5000/data/leaderboard");
-        const multiplayerData = await multiplayerResponse.json();
+        // Fetch leaderboard data from API
+        const response = await fetch("http://localhost:5000/leaderboard");
+        const data = await response.json();
 
-        // Fetch solo leaderboard (assuming endpoint exists, adjust as needed)
-        const soloResponse = await fetch("http://localhost:5000/data/solo-leaderboard");
-        const soloData = await soloResponse.json();
+        if (data && data.message === "Leaderboard fetched successfully!") {
+          // Process multiplayer leaderboard data
+          if (data.leaderboard2 && data.leaderboard2.length > 0) {
+            const sortedMultiplayerData = [...data.leaderboard2].sort(
+              (a, b) => parseInt(b.points) - parseInt(a.points)
+            );
+            setLeaderboardData(sortedMultiplayerData);
+          }
 
-        if (multiplayerData && multiplayerData.message && multiplayerData.message.leaderboard) {
-          const sortedMultiplayerData = [...multiplayerData.message.leaderboard].sort(
-            (a, b) => parseInt(b.points) - parseInt(a.points)
-          );
-          setLeaderboardData(sortedMultiplayerData);
-        }
-
-        if (soloData && soloData.message && soloData.message.leaderboard) {
-          const sortedSoloData = [...soloData.message.leaderboard].sort(
-            (a, b) => parseInt(b.points) - parseInt(a.points)
-          );
-          setSoloLeaderboardData(sortedSoloData);
+          // Process solo leaderboard data
+          if (data.leaderboard1 && data.leaderboard1.length > 0) {
+            const sortedSoloData = [...data.leaderboard1].sort(
+              (a, b) => parseInt(b.points) - parseInt(a.points)
+            );
+            setSoloLeaderboardData(sortedSoloData);
+          } else {
+            // If solo leaderboard is empty, we'll show a message instead of using mock data
+            setSoloLeaderboardData([]);
+          }
         }
       } catch (err) {
         setError("Failed to fetch leaderboard data");
@@ -70,18 +72,6 @@ const Leaderboard = () => {
   const switchToSolo = () => {
     setActiveLeaderboard("solo");
   };
-
-  // Mock solo leaderboard data in case the endpoint doesn't exist
-  // You can remove this once you have the real endpoint
-  useEffect(() => {
-    if (soloLeaderboardData.length === 0 && !isLoading) {
-      const mockSoloData = leaderboardData.map(player => ({
-        ...player,
-        gamesPlayed: player.win + player.loss + player.draw
-      }));
-      setSoloLeaderboardData(mockSoloData);
-    }
-  }, [leaderboardData, isLoading, soloLeaderboardData.length]);
 
   return (
     <div className="container">
@@ -175,20 +165,26 @@ const Leaderboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {leaderboardData.map((player, index) => (
-                      <tr key={player.userid} style={{
-                        background: index === 0 ? 'rgba(255, 215, 0, 0.2)' : 
-                                    index === 1 ? 'rgba(192, 192, 192, 0.2)' : 
-                                    index === 2 ? 'rgba(205, 127, 50, 0.2)' : 'rgba(44, 62, 80, 0.2)'
-                      }}>
-                        <td>{index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1)}</td>
-                        <td>{player.username}</td>
-                        <td>{player.points}</td>
-                        <td>{player.win}</td>
-                        <td>{player.loss}</td>
-                        <td>{player.draw}</td>
+                    {leaderboardData.length > 0 ? (
+                      leaderboardData.map((player, index) => (
+                        <tr key={player.userid} style={{
+                          background: index === 0 ? 'rgba(255, 215, 0, 0.2)' : 
+                                      index === 1 ? 'rgba(192, 192, 192, 0.2)' : 
+                                      index === 2 ? 'rgba(205, 127, 50, 0.2)' : 'rgba(44, 62, 80, 0.2)'
+                        }}>
+                          <td>{index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1)}</td>
+                          <td>{player.username}</td>
+                          <td>{player.points}</td>
+                          <td>{player.win}</td>
+                          <td>{player.loss}</td>
+                          <td>{player.draw}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="6" className="no-data">No multiplayer leaderboard data available</td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -204,18 +200,24 @@ const Leaderboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {soloLeaderboardData.map((player, index) => (
-                      <tr key={player.userid} style={{
-                        background: index === 0 ? 'rgba(255, 215, 0, 0.2)' : 
-                                    index === 1 ? 'rgba(192, 192, 192, 0.2)' : 
-                                    index === 2 ? 'rgba(205, 127, 50, 0.2)' : 'rgba(44, 62, 80, 0.2)'
-                      }}>
-                        <td>{index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1)}</td>
-                        <td>{player.username}</td>
-                        <td>{player.gamesPlayed || (player.win + player.loss + player.draw)}</td>
-                        <td>{player.points}</td>
+                    {soloLeaderboardData.length > 0 ? (
+                      soloLeaderboardData.map((player, index) => (
+                        <tr key={player.userid} style={{
+                          background: index === 0 ? 'rgba(255, 215, 0, 0.2)' : 
+                                      index === 1 ? 'rgba(192, 192, 192, 0.2)' : 
+                                      index === 2 ? 'rgba(205, 127, 50, 0.2)' : 'rgba(44, 62, 80, 0.2)'
+                        }}>
+                          <td>{index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1)}</td>
+                          <td>{player.username}</td>
+                          <td>{player.gamesPlayed || (player.win + player.loss + player.draw)}</td>
+                          <td>{player.points}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="4" className="no-data">No solo leaderboard data available</td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>

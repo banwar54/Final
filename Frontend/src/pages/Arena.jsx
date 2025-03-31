@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../images/swords.jpg";
 import "../styles/Arena.css";
-import Cookies from "js-cookie";
+
 
 const Arena = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);

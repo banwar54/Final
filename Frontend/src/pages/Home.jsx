@@ -4,7 +4,6 @@ import { Slide } from "@mui/material";
 import swordsLogo from "../images/swords.jpg";
 import loginImage from "../images/Login.jpg";
 import "../styles/Home.css";
-import Cookies from "js-cookie";
 
 const Home = () => {
   const location = useLocation();
