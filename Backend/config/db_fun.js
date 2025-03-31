@@ -17,18 +17,40 @@ const findUserByUsername = async (username) => {
     `;
 };
 
-const getTopic = async (topicId) => {
+// Function to get Topic
+const getTopicById = async (topicId) => {
     return postgres`
         SELECT * FROM topics
         WHERE id = ${topicId};
     `;
 }
 
-const getQuestions = async (topicId) => {
+// Function to get Question
+const getQuestionsById = async (topicId) => {
     return postgres`
         SELECT * FROM queoptn
         WHERE topic_id = ${topicId};
     `;
 }
 
-module.exports = { createUser, findUserByUsername, getTopic, getQuestions };
+// get single Player Leaderboard
+const getSinglePlayerLeaderboard =async() =>{
+    return postgres`
+        SELECT uh.userid, u.username, uh.points
+        FROM "userhistory1" uh
+        JOIN "users" u ON uh.userid = u.id
+        ORDER BY uh.points DESC;
+    `;
+}
+
+// get Two Player Leaderboard
+const getTwoPlayerLeaderboard =async() =>{
+    return postgres`
+        SELECT uh.userid, u.username, uh.points, uh.win, uh.loss, uh.draw 
+        FROM "userhistory2" uh
+        JOIN "users" u ON uh.userid = u.id
+        ORDER BY uh.points DESC, uh.win DESC;
+    `;
+}
+
+module.exports = { createUser, findUserByUsername, getTopicById, getQuestionsById, getSinglePlayerLeaderboard, getTwoPlayerLeaderboard };

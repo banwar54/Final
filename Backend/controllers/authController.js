@@ -7,7 +7,7 @@ dotenv.config();
 
 const SECRET_KEY = process.env.JWT_SECRET || "needs_to_be_changed";
 
-// Signup Handler
+// Signup Fucntion
 const signup = async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -30,7 +30,7 @@ const signup = async (req, res) => {
     }
 };
 
-// Login Handler
+// Login Function
 const login = async (req, res) => {
     try {
         const { username, password } = req.body;
