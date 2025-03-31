@@ -3,6 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../styles/Rules.css";
+import Cookies from "js-cookie";
 
 // Import assets
 import logo from "../images/swords.jpg";
@@ -12,6 +13,12 @@ import scrollBg from "../images/scroll.png";
 const Rules = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+
+    const handleLogout = () => {
+          Cookies.remove("token"); // Remove the authentication cookie
+          navigate("/login"); // Redirect to the login page
+        };
+  
 
   useEffect(() => {
     setSidebarOpen(false);
@@ -35,8 +42,8 @@ const Rules = () => {
         <img src={logo} alt="Logo" className="logo" />
         <h1 className="navbar-title">QUIZENA</h1>
         <nav className="nav">
-                    <Link to="/registration" className="signup-button">Log Out</Link>
-        </nav>
+           <Link to="/login" onClick={handleLogout} className="signup-button">Log Out</Link>
+        </nav>  
       </header>
 
       <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
@@ -52,7 +59,7 @@ const Rules = () => {
               </Link>
             </li>
             <li>
-              <Link to="/dashboard" className={`nav-link ${location.pathname === "/dashboard" ? "active" : ""}`}>
+              <Link to="/arena" className={`nav-link ${location.pathname === "/dashboard" ? "active" : ""}`}>
                 <span className="icon">⚔️</span> Enter Arena
               </Link>
             </li>
@@ -62,7 +69,7 @@ const Rules = () => {
               </Link>
             </li>
             <li>
-              <Link to="/rules" className={`nav-link ${location.pathname === "/friends" ? "active" : ""}`}>
+              <Link to="/friends" className={`nav-link ${location.pathname === "/friends" ? "active" : ""}`}>
                 <span className="icon">🤝 </span>Friends
               </Link>
             </li>

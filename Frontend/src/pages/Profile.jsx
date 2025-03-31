@@ -5,6 +5,7 @@ import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend
 } from "recharts";
+import Cookies from "js-cookie";
 
 // Import assets
 import logo from "../images/swords.jpg";
@@ -18,6 +19,11 @@ const Profile = () => {
   
   const location = useLocation();
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+        Cookies.remove("token"); // Remove the authentication cookie
+        navigate("/login"); // Redirect to the login page
+      };
 
   useEffect(() => {
     setSidebarOpen(false);
@@ -65,7 +71,7 @@ const Profile = () => {
         <img src={logo} alt="Logo" className="logoStyles" />
         <h1 className="navbarTitleStyles">QUIZENA</h1>
         <nav className="nav">
-            <Link to="/registration" className="signup-button">Log Out</Link>
+            <Link to="/login" onClick={handleLogout} className="signup-button">Log Out</Link>
         </nav>
       </header>
 
@@ -77,7 +83,7 @@ const Profile = () => {
         <nav>
           <ul className="nav-list">
             <li><Link to="/" className="nav-link">🏠 Home</Link></li>
-            <li><Link to="/dashboard" className="nav-link">⚔️ Enter Arena</Link></li>
+            <li><Link to="/arena" className="nav-link">⚔️ Enter Arena</Link></li>
             <li><Link to="/profile" className={`nav-link ${location.pathname === "/profile" ? "active" : ""}`}>👤 Profile</Link></li>
             <li><Link to="/friends" className="nav-link">🤝 Friends</Link></li>
             <li><Link to="/leaderboard" className="nav-link">🏆 Leaderboard</Link></li>

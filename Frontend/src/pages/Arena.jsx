@@ -2,11 +2,17 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../images/swords.jpg";
 import "../styles/Arena.css";
+import Cookies from "js-cookie";
 
 const Arena = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+            Cookies.remove("token"); // Remove the authentication cookie
+            navigate("/login"); // Redirect to the login page
+          };
 
   useEffect(() => {
     setSidebarOpen(false);
@@ -39,6 +45,9 @@ const Arena = () => {
         <button onClick={toggleSidebar} className="menu-button">☰</button>
         <img src={logo} alt="Logo" className="logo" />
         <h1 className="navbar-title">QUIZENA</h1>
+        <nav className="nav">
+            <Link to="/login" onClick={handleLogout} className="signup-button">Log Out</Link>
+         </nav>  
       </header>
 
       <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>

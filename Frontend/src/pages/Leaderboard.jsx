@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Logo from "../images/swords.jpg";
 import "../styles/Leaderboard.css";
+import Cookies from "js-cookie";
 
 const Leaderboard = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -11,6 +12,12 @@ const Leaderboard = () => {
   const [error, setError] = useState(null);
   const [activeLeaderboard, setActiveLeaderboard] = useState("multiplayer"); // Default to multiplayer
   const location = useLocation();
+
+    const handleLogout = () => {
+      Cookies.remove("token"); // Remove the authentication cookie
+      navigate("/login"); // Redirect to the login page
+    };
+    
 
   useEffect(() => {
     const fetchLeaderboardData = async () => {
@@ -85,7 +92,7 @@ const Leaderboard = () => {
         <img src={Logo} alt="Logo" className="logo" />
         <h1 className="navbar-title">QUIZENA</h1>
         <nav className="nav">
-            <Link to="/registration" className="signup-button">Log Out</Link>
+            <Link to="/login" onClick={handleLogout} className="signup-button">Log Out</Link>
         </nav>
       </header>
 
@@ -102,7 +109,7 @@ const Leaderboard = () => {
               </Link>
             </li>
             <li>
-              <Link to="/dashboard" className={`nav-link ${location.pathname === "/dashboard" ? "active" : ""}`}>
+              <Link to="/arena" className={`nav-link ${location.pathname === "/dashboard" ? "active" : ""}`}>
                 <span className="icon">⚔️</span> Enter Arena
               </Link>
             </li>

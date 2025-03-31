@@ -4,6 +4,7 @@ import { Slide } from "@mui/material";
 import swordsLogo from "../images/swords.jpg";
 import loginImage from "../images/Login.jpg";
 import "../styles/Home.css";
+import Cookies from "js-cookie";
 
 const Home = () => {
   const location = useLocation();
@@ -12,6 +13,12 @@ const Home = () => {
   const [showTitle, setShowTitle] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+
+  const handleLogout = () => {
+    Cookies.remove("token"); // Remove the authentication cookie
+    navigate("/login"); // Redirect to the login page
+  };
   
   // Animation effects for homepage
   useEffect(() => {
@@ -55,7 +62,7 @@ const Home = () => {
               <div className="title-logo">QUIZENA</div>
             </div>
             <nav className="nav">
-              <Link to="/registration" className="signup-button">Log Out</Link>
+              <Link to="/login" className="signup-button" onClick={handleLogout}>Log Out</Link>
             </nav>
           </header>
           
@@ -67,7 +74,7 @@ const Home = () => {
             <nav>
               <ul className="nav-list">
                 <li><Link to="/" className={`nav-link ${location.pathname === "/" ? "active" : ""}`}>🏠 Home</Link></li>
-                <li><Link to="/dashboard" className="nav-link">⚔️ Enter Arena</Link></li>
+                <li><Link to="/arena" className="nav-link">⚔️ Enter Arena</Link></li>
                 <li><Link to="/profile" className="nav-link">👤 Profile</Link></li>
                 <li><Link to="/friends" className="nav-link">🤝 Friends</Link></li>
                 <li><Link to="/leaderboard" className="nav-link">🏆 Leaderboard</Link></li>

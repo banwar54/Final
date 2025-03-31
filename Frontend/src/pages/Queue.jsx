@@ -71,7 +71,7 @@ const Queue = () => {
       
       const currentPath = window.location.pathname;
       if (currentPath === '/quiz') {
-        navigate('/dashboard');
+        navigate('/arena');
       }
     };
 
@@ -192,7 +192,7 @@ const Queue = () => {
       leaveQueue();
     }
     
-    navigate("/dashboard");
+    navigate("/arena");
   };
 
   return (
