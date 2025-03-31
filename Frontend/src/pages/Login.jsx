@@ -4,7 +4,7 @@ import { Box, Button, TextField, Typography, Alert } from "@mui/material";
 import "../styles/Login.css";
 
 const Login = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ username: "", password: "" });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -20,7 +20,9 @@ const Login = () => {
       const response = await fetch("http://localhost:5000/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+    
         body: JSON.stringify(formData),
+        credentials:'include'
       });
 
       const data = await response.json();
@@ -32,7 +34,7 @@ const Login = () => {
       console.log("Login Successful:", data);
       localStorage.setItem("token", data.token);
 
-      navigate("/dashboard");
+      navigate("/");
     } catch (error) {
       setError(error.message);
     }
@@ -64,14 +66,14 @@ const Login = () => {
           {error && <Alert severity="error">{error}</Alert>}
 
           <form onSubmit={handleSubmit} className="login-form">
-            <Typography className="login-label">Email</Typography>
+            <Typography className="login-label">Username</Typography>
             <TextField
-              type="email"
+              type="text"
               variant="outlined"
               fullWidth
-              placeholder="Enter your email"
-              name="email"
-              value={formData.email}
+              placeholder="Enter your username"
+              name="username"
+              value={formData.username}
               onChange={handleChange}
               className="login-input"
             />
@@ -100,9 +102,7 @@ const Login = () => {
             </Link>
           </Typography>
 
-          <Button component={Link} to="/" variant="contained" className="login-submit-button">
-            Move to Home Page
-          </Button>
+         
         </Box>
       </Box>
     </>
