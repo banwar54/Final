@@ -23,7 +23,13 @@ const Leaderboard = () => {
       try {
         setIsLoading(true);
         // Fetch leaderboard data from API
-        const response = await fetch("http://localhost:5000/leaderboard");
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://localhost:5000/leaderboard",{
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        });
         const data = await response.json();
 
         if (data && data.message === "Leaderboard fetched successfully!") {

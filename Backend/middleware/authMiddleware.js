@@ -7,7 +7,7 @@ const SECRET_KEY = process.env.JWT_SECRET || "needs_to_be_changed";
 
 // Middleware to check authentication
 const authenticateUser = (req, res, next) => {
-    const token = req.headers.authorization?.split(" ")[0]; // Extract token from "Bearer <token>"
+    const token = req.headers.authorization?.split(" ")[1]; // Extract token from "Bearer <token>"
 
     if (!token) {
         return res.status(401).json({ message: "Unauthorized: No token provided" });

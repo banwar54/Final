@@ -7,8 +7,8 @@ const get_leaderBoard = async (req, res) => {
         const data2 = await getTwoPlayerLeaderboard();
 
         // Debugging logs (will be remove later)
-        console.log("Leaderboard1:", data1);
-        console.log("Leaderboard2:", data2);
+        // console.log("Leaderboard1:", data1);
+        // console.log("Leaderboard2:", data2);
 
         return res.status(200).json({
             message: "Leaderboard fetched successfully!",
