@@ -1,13 +1,11 @@
 const express = require("express");
-const { getQuesData } = require("../controllers/quesController");
+const { getTopicData } = require("../controllers/quesController");
+const { authenticateUser } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
 // Check Ques Route
-router.get("/", async (req, res) => {
-    res.send("Welcome to Ques Page");
-    const data = await getQuesData("1");
-    console.log(data);
-});
+// router.get("/", authenticateUser, getTopicData);        //This will be main route later
+router.get("/", getTopicData);                  //This is temp Route for debugging will be removed later
 
 module.exports = router;

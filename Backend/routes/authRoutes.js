@@ -8,14 +8,14 @@ router.get("/", (req, res) => {
     res.send("Welcome to Auth Page");
 });
 
-// Check /signup Route
+// Check /signup Route          for debugging (optional to remove)
 router.get("/signup", (req, res) => {
     res.send("Welcome to Signup Page");
 });
 // Register User
 router.post("/signup", signup);
 
-// Check /login Route
+// Check /login Route           for debugging (optional to remove)
 router.get("/login", (req, res) => {
     res.send("Welcome to Login Page");
 });
