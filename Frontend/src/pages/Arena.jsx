@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../images/swords.jpg";
 import "../styles/Arena.css";
 
-
 const Arena = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
@@ -46,8 +45,8 @@ const Arena = () => {
         <img src={logo} alt="Logo" className="logo" />
         <h1 className="navbar-title">QUIZENA</h1>
         <nav className="nav">
-            <Link to="/login" onClick={handleLogout} className="signup-button">Log Out</Link>
-         </nav>  
+          <Link to="/login" onClick={handleLogout} className="signup-button">Log Out</Link>
+        </nav>
       </header>
 
       <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
@@ -87,7 +86,6 @@ const Arena = () => {
                 <span className="icon">📜</span> Rules
               </Link>
             </li>
-            
           </ul>
         </nav>
       </div>
@@ -95,7 +93,10 @@ const Arena = () => {
       <div className="main-content">
         <div className="content">
           <h1 className="title">WELCOME TO THE BATTLES OF THE QUIZ LORDS</h1>
-          <button className="button" onClick={joinQueue}>Start Game</button>
+          <div className="button-container">
+            <button className="game-button" onClick={joinQueue}>Solo Game</button>
+            <button className="game-button" onClick={joinQueue}>Multiplayer Game</button>
+          </div>
         </div>
       </div>
     </div>

@@ -124,9 +124,10 @@ const Queue = () => {
     setStatus("Joining queue...");
 
     try {
-      const response = await fetch(`http://localhost:5000/queue/join?socketId=${socket.id}`, {
-        method: "GET",
-        headers: { Authorization: `${token}` },
+      const response = await fetch(`http://localhost:5000/quiz2/join`, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` },
+        body:{socketId:`${socket}`},
       });
 
       const data = await response.json();
@@ -161,9 +162,10 @@ const Queue = () => {
     if (!token) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/queue/leave?socketId=${socket.id}`, {
-        method: "GET",
-        headers: { Authorization: `${token}` },
+      const response = await fetch(`http://localhost:5000/quiz2/leave`, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` },
+        body:{socketId:`${socket}`},
       });
 
       const data = await response.json();
