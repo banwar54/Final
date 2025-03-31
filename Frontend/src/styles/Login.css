@@ -1,0 +1,150 @@
+/* Login.css */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#root {
+    width: 100%;
+    height: 100%;
+}
+
+.login-container {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-image: url("../images/register.jpg"); /* Ensure the path is correct */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.login-box {
+    padding: 30px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: bold;
+    font-size: 2rem;
+    color: white;
+    width: 350px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.login-title {
+    margin-bottom: 20px;
+    font-family: serif;
+}
+
+.login-form {
+    width: 100%;
+}
+
+.login-label {
+    align-self: flex-start;
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.login-input {
+    margin-top: 5px;
+    background: rgb(255, 255, 255);
+    border-radius: 5px;
+}
+
+.login-input .MuiOutlinedInput-root {
+    height: 40px;
+    font-size: 14px;
+}
+
+.login-input .MuiOutlinedInput-root input {
+    padding: 8px;
+}
+
+.login-submit-button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px; /* Added gap above */
+    margin-bottom: 20px; /*Added gap below */
+    background: #3B3FCB;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.login-submit-button:hover {
+    background: #3038a5;
+}
+
+.login-register-text {
+    margin-top: 15px;
+    font-size: 16px;
+}
+
+.login-register-link {
+    color: #FFD700;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* Material UI Styles (if needed, incorporate directly into component or create a separate file) */
+.MuiAlert-root {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+/* apply the button color directly */
+.login-submit-button {
+    background: #3B3FCB;
+}
+
+.login-submit-button:hover {
+    background: #3038a5;
+}
+
+/* Gap above the move to home button*/
+.login-move-home-button{
+    margin-top: 20px;
+}
+
+
+/* Override browser autofill styling */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+  -webkit-text-fill-color: black !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Ensure the background stays correct when autofilled */
+.registration-input .MuiOutlinedInput-root.Mui-focused,
+.registration-input .MuiOutlinedInput-root:hover {
+  background-color: white;
+}
+
+/* Add specificity to ensure your styles win */
+.registration-input.MuiTextField-root .MuiOutlinedInput-root {
+  height: 40px;
+  font-size: 14px;
+  background-color: white;
+}

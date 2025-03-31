@@ -84,6 +84,9 @@ const Leaderboard = () => {
         <button onClick={toggleSidebar} className="menu-button">☰</button>
         <img src={Logo} alt="Logo" className="logo" />
         <h1 className="navbar-title">QUIZENA</h1>
+        <nav className="nav">
+            <Link to="/registration" className="signup-button">Log Out</Link>
+        </nav>
       </header>
 
       <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
