@@ -15,9 +15,9 @@ const Rules = () => {
   const location = useLocation();
 
     const handleLogout = () => {
-          Cookies.remove("token"); // Remove the authentication cookie
-          navigate("/login"); // Redirect to the login page
-        };
+      localStorage.removeItem("token"); // Remove the authentication token
+      navigate("/login"); // Redirect to the login page
+    };
   
 
   useEffect(() => {

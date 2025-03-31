@@ -14,7 +14,7 @@ const Leaderboard = () => {
   const location = useLocation();
 
     const handleLogout = () => {
-      Cookies.remove("token"); // Remove the authentication cookie
+      localStorage.removeItem("token"); // Remove the authentication token
       navigate("/login"); // Redirect to the login page
     };
     

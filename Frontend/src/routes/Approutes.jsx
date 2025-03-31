@@ -13,19 +13,16 @@ import Quiz from '../pages/Quiz.jsx';
 
 // Authentication check function
 const getCookie = (name) => {
-    const cookies = document.cookie.split('; ');
-    const tokenCookie = cookies.find(row => row.startsWith(`${name}=`));
+  return localStorage.getItem("token");
+};
 
-     return tokenCookie ? tokenCookie.split('=')[0] : null;
-    
-  };
+const isAuthenticated = () => {
+  return getCookie() !== null;
+};
 
-  const isAuthenticated = () => {
-    return getCookie('token') !== null;
-  };
-  const PublicRoute = ({ children }) => {
-    return isAuthenticated() ? <Navigate to="/" replace /> : children;
-  };
+const PublicRoute = ({ children }) => {
+  return isAuthenticated() ? <Navigate to="/" replace /> : children;
+};
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
