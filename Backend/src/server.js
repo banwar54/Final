@@ -5,6 +5,7 @@ const cors = require("cors");
 
 const authRoutes = require("../routes/authRoutes")
 const leaderboardRoutes = require("../routes/leaderboardRoutes")
+const questionRoutes = require("../routes/quesRoutes")                   // will be remove after /queue is created
 const { checkConnection } = require("../config/db");
 
 dotenv.config();
@@ -21,6 +22,7 @@ app.use(cors());
 // Routes
 app.use("/auth", authRoutes);
 app.use("/leaderboard",leaderboardRoutes)
+app.use("/question",questionRoutes)         // will be remove after /queue is created
 
 // Base Route
 app.get("/", (req, res) => {
