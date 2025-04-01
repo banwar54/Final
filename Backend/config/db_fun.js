@@ -69,6 +69,25 @@ const saveTwoPlayerSession=async (gameId, player1, player2, result) =>{
         `;
 }
 
+//saving new qestions 
+
+const saveChallenge = async (userid,que,qo1,qo2,qo3,qo4,qans) =>{
+    await postgres`INSERT INTO createchallenge (que, qo1,qo2,qo3,qo4,qans,userid) 
+    VALUES (${que}, ${qo1}, ${qo2}, ${qo3} , ${qo4} , ${qans} , ${userid});`;
+}
+
+const  getChallenge = async ()=>{
+    return postgres`
+        SELECT * FROM createchallenge ORDER BY created_at;
+    `;
+}
+
+const  getChallengebyPalyer = async (userid)=>{
+    return await postgres`
+        SELECT * FROM createchallenge WHERE userid=${userid};
+    `;
+}
+
 module.exports = { 
     createUser,
     findUserByUsername,
@@ -78,4 +97,7 @@ module.exports = {
     getTwoPlayerLeaderboard,
     saveSinglePlayerSession,
     saveTwoPlayerSession,
+    saveChallenge,
+    getChallenge,
+    getChallengebyPalyer
  };

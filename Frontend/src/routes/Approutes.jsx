@@ -9,6 +9,8 @@ import Arena from '../pages/Arena.jsx';
 import Login from '../pages/Login.jsx';
 import Registration from '../pages/Registration.jsx';
 import Queue from '../pages/Queue.jsx';
+import Challenges from '../pages/Challenges.jsx';
+import ChallengeDisplay from '../pages/ChallengeDisplay.jsx';
 
 // Authentication check function
 const getCookie = (name) => {
@@ -44,6 +46,8 @@ function Approutes() {
         <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
         <Route path="/arena" element={<ProtectedRoute><Arena /></ProtectedRoute>} />
         <Route path="/queue" element={<ProtectedRoute><Queue /></ProtectedRoute>} />
+        <Route path="/challenge" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
+        <Route path="/showchallenge" element={<ProtectedRoute><ChallengeDisplay /></ProtectedRoute>} />
 
         {/* Fallback Route */}
         <Route path="*" element={<Navigate to="/" replace />} />
