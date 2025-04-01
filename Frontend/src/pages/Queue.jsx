@@ -1,232 +1,358 @@
-// Queue.jsx
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useSocket } from "./config/socket_config";
+import { useNavigate } from "react-router-dom";
+import io from "socket.io-client";
 import "../styles/Queue.css";
+import "../styles/Quiz.css";
+
+const QUEUE_URL = "http://localhost:5000";
 
 const Queue = () => {
-  const [status, setStatus] = useState("Initializing...");
-  const [inQueue, setInQueue] = useState(false);
-  const [matchStarted, setMatchStarted] = useState(false);
-  const [gameId, setGameId] = useState(null);
   const navigate = useNavigate();
-  const { socket, isConnected, connect, disconnect } = useSocket();
+  const [Socket, setSocket] = useState(null);
+  const [InQueue, setInQueue] = useState(false);
+
+  const [QuestionData, setQuestionData] = useState(null);
+  const [TopicData, setTopicData] = useState(null);
+  const [GameId, setGameId] = useState(null);
+
+  const [ShowingTopic, setShowingTopic] = useState(false);
+  const [TopicTime, setTopicTime] = useState(10);
+
+  const [ShowingQuiz, setShowingQuiz] = useState(false);
+  const [QuizTime, setQuizTime] = useState(50);
+  const [QuizCompleted, setQuizCompletion] = useState(false);
+
+  const [CurrentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [SelectedAnswers, setSelectedAnswers] = useState(new Array(5).fill(null));
+  const [AnswersSubmitted, setAnswersSubmitted] = useState(false);
+
+  const [Score, setScore] = useState(0);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
+    const newSocket = io(`${QUEUE_URL}`, {
+      transports: ["websocket"],
+      withCredentials: true,
+    });
 
-    if (!isConnected) {
-      connect();
-      setStatus("Connecting to server...");
-    } else {
-      setStatus("Connected to server. Ready to join queue.");
-    }
+    // Log after connection attempt
+    newSocket.on("connect", () => {
+      setSocket(newSocket);
+      console.log("Connected to socket:", newSocket.id);
+    });
 
-    const existingGameId = localStorage.getItem("gameId");
-    if (existingGameId) {
-      setGameId(existingGameId);
-      setMatchStarted(true);
-      setStatus("Returning to active game...");
-      
-      if (localStorage.getItem("questions") && localStorage.getItem("topic")) {
-        navigate('/quiz');
-      } else {
-        cleanupGameData();
-      }
-    }
-  }, [navigate, isConnected, connect]);
-
-  useEffect(() => {
-    if (!socket) return;
-
-    const gameStartHandler = (data) => {
-      console.log("Game start received:", data);
-      setMatchStarted(true);
-      setStatus("Match found! Game starting...");
-      setGameId(data.gameId);
-      
-      localStorage.setItem("questions", JSON.stringify(data.questions));
-      localStorage.setItem("topic", JSON.stringify(data.topic));
-      localStorage.setItem("gameId", data.gameId);
-      
-      navigate('/quiz');
-    };
-
-    const queuedHandler = (data) => {
-      setStatus(`In queue: ${data.message || "Waiting for opponent"}`);
+    newSocket.on("queued", () => {
       setInQueue(true);
-    };
-  
-    const gameEndHandler = (data) => {
-      console.log("Game end event received:", data);
-      setStatus(`Game ended: ${data.message || "Game has ended"}`);
-      setMatchStarted(false);
-      setGameId(null);
-      
-      cleanupGameData();
-      
-      const currentPath = window.location.pathname;
-      if (currentPath === '/quiz') {
-        navigate('/arena');
+      console.log("Added to queue:", newSocket.id);
+    });
+
+    newSocket.on("game_start", async (data) => {
+      try {
+        setQuestionData(data.questions[0]);
+        setTopicData(data.topic[0]);
+        setGameId(data.gameId);
+      } catch (error) {
+        console.log("Error parsing data", error);
       }
-    };
+    });
 
-    socket.on("game_start", gameStartHandler);
-    socket.on("queued", queuedHandler);
-    socket.on("game_end", gameEndHandler);
+    return () => newSocket.disconnect();
+  }, []);
 
-    if (isConnected && !gameId) {
-      setStatus("Connected to server. Ready to join queue.");
-      
-      const autoJoinQueue = async () => {
-        if (!inQueue && !matchStarted) {
-          await joinQueue();
-        }
-      };
-      
-      autoJoinQueue();
-    } else if (isConnected && gameId) {
-      setStatus("Connected to server. Game in progress.");
-    } else {
-      setStatus("Connecting to server...");
-    }
+  useEffect(() => {
+    if (TopicData) setShowingTopic(true);
+  }, [TopicData]);
 
-    return () => {
-      socket.off("game_start", gameStartHandler);
-      socket.off("queued", queuedHandler);
-      socket.off("game_end", gameEndHandler);
-    };
-  }, [socket, isConnected, navigate, inQueue, matchStarted, gameId]);
+  useEffect(() => {
+    if (Socket) {
+      const token = localStorage.getItem("token");
 
-  const cleanupGameData = () => {
-    localStorage.removeItem("questions");
-    localStorage.removeItem("topic");
-    localStorage.removeItem("gameId");
-  };
-
-  const joinQueue = async () => {
-    if (!socket || !isConnected) {
-      setStatus("Not connected to server. Please wait or refresh the page.");
-      connect();
-      return;
-    }
-
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
-    setStatus("Joining queue...");
-
-    try {
-      const response = await fetch(`http://localhost:5000/quiz2/join`, {
+      fetch(`${QUEUE_URL}/quiz2/join/?socketId=${Socket.id}`, {
         method: "POST",
-        headers: { "Authorization": `Bearer ${token}` },
-        body:{socketId:`${socket}`},
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        setStatus(data.message || "Joined queue successfully!");
-        setInQueue(true);
-      } else {
-        if (data.inActiveGame) {
-          setStatus("You are already in an active game!");
-          setMatchStarted(true);
-          if (data.gameId) {
-            setGameId(data.gameId);
-            localStorage.setItem("gameId", data.gameId);
-          }
-        } else {
-          setStatus(`Error: ${data.error || "Failed to join queue"}`);
-        }
-      }
-    } catch (error) {
-      console.error("Error joining queue:", error);
-      setStatus("Failed to join queue. Please try again.");
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("Queue Response:", data);
+        })
+        .catch((error) => console.error("Error joining queue:", error));
     }
-  };
+  }, [Socket]);
 
   const leaveQueue = async () => {
-    if (!socket || !isConnected) {
-      setStatus("Not connected to server.");
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`${QUEUE_URL}/quiz2/leave?socketId=${Socket.id}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log(response);
+      Socket.disconnect();
+    } catch (error) {
+      console.error("Error leaving queue:", error);
+      console.log("Failed to leave queue. Please try again.");
+    }
+  };
+
+  // Topic timer countdown
+  useEffect(() => {
+    if (!ShowingTopic || !TopicData) return;
+
+    if (TopicTime <= 0) {
+      setShowingTopic(false);
+      setShowingQuiz(true);
       return;
     }
 
-    const token = localStorage.getItem("token");
-    if (!token) return;
+    const Timer = setInterval(() => {
+      setTopicTime((prev) => prev - 1);
+    }, 1000);
 
-    try {
-      const response = await fetch(`http://localhost:5000/quiz2/leave`, {
-        method: "POST",
-        headers: { "Authorization": `Bearer ${token}` },
-        body:{socketId:`${socket}`},
-      });
+    return () => clearInterval(Timer);
+  }, [TopicTime, ShowingTopic, TopicData]);
 
-      const data = await response.json();
-      
-      if (response.ok && data.success) {
-        if (data.inActiveGame) {
-          setStatus("Cannot leave an active game. The game will continue.");
-        } else {
-          setStatus("Left queue. Ready to join again.");
-          setInQueue(false);
-          if (!matchStarted) {
-            cleanupGameData();
-          }
-        }
-      } else {
-        setStatus(`Error: ${data.error || "Failed to leave queue"}`);
+  // Quiz timer countdown - only start after topic is done showing
+  useEffect(() => {
+    if (!ShowingQuiz || !QuestionData) return;
+
+    if (QuizTime <= 0) {
+      handleQuizEnd();
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setQuizTime((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [QuizTime, ShowingQuiz, QuestionData]);
+
+  // Calculate score based on answers
+  const calculateScore = () => {
+    if (!QuestionData) return 0;
+
+    let totalScore = 0;
+
+    // Loop through each question and check if the selected answer is correct
+    for (let i = 0; i < 5; i++) {
+      const answerKey = `q${i + 1}ans`;
+      // If the user selected an answer and it matches the correct answer
+      if (SelectedAnswers[i] && SelectedAnswers[i] === QuestionData[answerKey]) {
+        totalScore += 1;
       }
-    } catch (error) {
-      console.error("Error leaving queue:", error);
-      setStatus("Failed to leave queue. Please try again.");
     }
+    return totalScore;
   };
 
-  const exitQueue = () => {
-    if (inQueue && !matchStarted) {
-      leaveQueue();
-    }
-    
-    navigate("/arena");
+  // Handle quiz completion - submit score and show results
+  const handleQuizEnd = () => {
+    setQuizCompletion(true);
+    const finalScore = calculateScore();
+    setScore(finalScore);
+    submitScore(finalScore);
   };
+  
+  // Submit score to backend via socket
+  const submitScore = (finalScore) => {
+    if (AnswersSubmitted || !Socket) return;
+
+    if (!GameId) {
+      console.error("No game ID found");
+      return;
+    }
+
+    // Create score payload
+    const payload = {
+      gameId: GameId,
+      score: finalScore,
+      completionTime: 50 - QuizTime, // Time taken to complete in seconds
+    };
+
+    // Emit the game_end event with score
+    Socket.emit("game_end", payload);
+    console.log("Submitting score:", payload);
+
+    setAnswersSubmitted(true);
+  };
+
+  if (ShowingTopic && TopicData) {
+    return (
+      <div className="pageWrapper">
+        <div className="container">
+          <div className="overlay"></div>
+          <div className="card">
+            <h2 className="heading">{TopicData.topic_name}</h2>
+            <p className="description">{TopicData.topic_description}</p>
+
+            {/* Circular Timer */}
+            <div className="timerContainer">
+              <svg width="140" height="140">
+                {/* Background Circle */}
+                <circle cx="70" cy="70" r="60" stroke="#555" strokeWidth="10" fill="none" />
+                {/* Progress Circle */}
+                <circle
+                  cx="70"
+                  cy="70"
+                  r="60"
+                  stroke="limegreen"
+                  strokeWidth="10"
+                  fill="none"
+                  strokeDasharray="377"
+                  strokeDashoffset={(1 - TopicTime / 10) * 377}
+                  strokeLinecap="round"
+                  transform="rotate(-90 70 70)"
+                  style={{ transition: "stroke-dashoffset 1s linear" }}
+                />
+                {/* Timer Text */}
+                <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontSize="24px" fill="white">
+                  {TopicTime}s
+                </text>
+              </svg>
+            </div>
+
+            <p className="timerText">Quiz starts in {TopicTime} seconds...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (ShowingQuiz && QuestionData) {
+    // Quiz content - original quiz implementation
+    const questionKey = `q${CurrentQuestionIndex + 1}`;
+    const options = [
+      QuestionData[`${questionKey}o1`],
+      QuestionData[`${questionKey}o2`],
+      QuestionData[`${questionKey}o3`],
+      QuestionData[`${questionKey}o4`],
+    ];
+
+    return (
+      <div className="pageWrapper">
+        <div className="container">
+          <div className="overlay"></div>
+
+          {QuizCompleted ? (
+            <div className="modal">
+              <h2 style={{ color: AnswersSubmitted ? "#28a745" : "red", fontSize: "24px", marginBottom: "20px" }}>
+                {AnswersSubmitted ? "Quiz Complete!" : "Quiz Completed"}
+              </h2>
+              <p>You answered {SelectedAnswers.filter((answer) => answer !== null).length} out of 5 questions</p>
+              <p>Your score: {Score} / 5</p>
+              <p>Time remaining: {QuizTime} seconds</p>
+
+              <button className="backButton" onClick={() => navigate("/arena")}>
+                Back to Arena
+              </button>
+            </div>
+          ) : (
+            <div className="quizCard">
+              <h2 className="heading">Quiz Time!</h2>
+
+              {/* Circular Timer */}
+              <div className="timerContainer">
+                <svg width="100" height="100">
+                  {/* Background Circle */}
+                  <circle cx="50" cy="50" r="40" stroke="#555" strokeWidth="8" fill="none" />
+                  {/* Progress Circle */}
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    stroke={QuizTime < 15 ? "red" : "limegreen"}
+                    strokeWidth="8"
+                    fill="none"
+                    strokeDasharray="251.2"
+                    strokeDashoffset={(1 - QuizTime / 50) * 251.2}
+                    strokeLinecap="round"
+                    transform="rotate(-90 50 50)"
+                    style={{ transition: "stroke-dashoffset 1s linear" }}
+                  />
+                  {/* Timer Text */}
+                  <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontSize="18px" fill="white">
+                    {QuizTime}s
+                  </text>
+                </svg>
+              </div>
+
+              <div className="progressBar">
+                <div className="progressIndicator" style={{ width: `${((CurrentQuestionIndex + 1) / 5) * 100}%` }}></div>
+                <span className="progressText">Question {CurrentQuestionIndex + 1} of 5</span>
+              </div>
+
+              <div className="questionContainer">
+                <p className="question">{QuestionData[questionKey]}</p>
+                <div className="optionsContainer">
+                  {options.map((option, index) => (
+                    <button
+                      key={index}
+                      className="option"
+                      style={{
+                        background: SelectedAnswers[CurrentQuestionIndex] === option ? "#ff416c" : "#6a11cb",
+                      }}
+                      onClick={() => {
+                        const updatedAnswers = [...SelectedAnswers];
+                        updatedAnswers[CurrentQuestionIndex] = option;
+                        setSelectedAnswers(updatedAnswers);
+                      }}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="navButtons">
+                <button
+                  className="navButton"
+                  style={{ visibility: CurrentQuestionIndex === 0 ? "hidden" : "visible" }}
+                  onClick={() => setCurrentQuestionIndex(CurrentQuestionIndex - 1)}
+                >
+                  Prev
+                </button>
+                <button
+                  className="navButton"
+                  style={{ visibility: CurrentQuestionIndex === 4 ? "hidden" : "visible" }}
+                  onClick={() => setCurrentQuestionIndex(CurrentQuestionIndex + 1)}
+                >
+                  Next
+                </button>
+              </div>
+              {CurrentQuestionIndex === 4 && (
+                <div style={{ marginTop: "20px" }}>
+                  <button className="finishButton" onClick={handleQuizEnd}>
+                    Finish Quiz
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="main-content-styles">
       <div className="content-styles">
         <h1 className="title-styles">THE ARENA AWAITS ..</h1>
 
-        <p className="status-styles">{status}</p>
-
-        {inQueue && !matchStarted && <div className="spinner"></div>}
-
-        {inQueue && !matchStarted && (
-          <p className="message-styles">You are in queue, please wait....</p>
-        )}
-
-        {matchStarted && (
-          <p className="match-active-styles">Match is active! Return to game</p>
-        )}
+        {InQueue && <div className="spinner"></div>}
+        {InQueue && <p className="message-styles">You are in queue, please wait....</p>}
 
         <div className="button-container">
-          {matchStarted && (
-            <button 
-              className="return-to-game-button"
-              onClick={() => navigate('/quiz')}
+          {
+            <button
+              className="exit-queue-button"
+              onClick={() => {
+                leaveQueue();
+                navigate("/arena");
+              }}
             >
-              Return to Game
+              Exit Queue
             </button>
-          )}
-          
-          <button className="exit-queue-button" onClick={exitQueue}>
-            {matchStarted ? "Back to Dashboard" : "Exit Queue"}
-          </button>
+          }
         </div>
       </div>
     </div>
