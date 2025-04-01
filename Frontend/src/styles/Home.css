@@ -178,7 +178,7 @@
 /* Button styles */
 .button {
   background: linear-gradient(to right, #ffffff, #A1C4FD);
-  color: #000;
+  color: #000 !important;
   font-size: 1.3em;
   font-weight: bold;
   padding: 12px 24px;

@@ -29,8 +29,9 @@ const Login = () => {
         throw new Error(data.error || "Login failed");
       }
 
-      // console.log("Login Successful:", data);
+      console.log("Login Successful:", data);
       localStorage.setItem("token", data.token);
+      localStorage.setItem("username", data.user.username);
 
       navigate("/");
     } catch (error) {
