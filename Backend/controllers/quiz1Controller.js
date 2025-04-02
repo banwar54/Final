@@ -4,9 +4,6 @@ const { fetchTopicData } = require("./quesController");
 
 const userGameMap = {}; // Maps user ID to game details
 
-// Helper function to retrieve game details using user ID
-const getGameDetailsFromUserId = (userId) => userGameMap[userId] || null;
-
 // Save game session to the database
 const saveSession = async (gameId, playerId, playerScore) => {
     if (!playerId) {
@@ -23,7 +20,7 @@ const saveSession = async (gameId, playerId, playerScore) => {
 
 // Handle game end logic
 const handleGameEnd = (userId, gameId) => {
-    const gameDetails = getGameDetailsFromUserId(userId);
+    const gameDetails = userGameMap[userId];
     if (!gameDetails || gameDetails.gameId !== gameId) return;
 
     saveSession(gameId, userId, gameDetails.score);
@@ -33,21 +30,22 @@ const handleGameEnd = (userId, gameId) => {
 
 // Start a new game session
 const startGame = async (req, res) => {
+    const gameId = uuidv4();
+    const topicId = Math.floor(Math.random() * 5) + 1; 
+    const data = await fetchTopicData(topicId.toString());
+    
     if (!req.user) {
-        return res.status(400).json({ error: "Invalid request" });
+        return res.status(400).json({ error: "Invalid request(Logout and try again" });
     }
 
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     // Check if the user is already in an active game
-    if (getGameDetailsFromUserId(userId)) {
+    if (userGameMap.hasOwnProperty(userId)) {
         return res.status(400).json({
             error: "A game is already in progress on your account. Please wait for it to finish."
         });
     }
-
-    const gameId = uuidv4();
-    const data = await fetchTopicData();
 
     if (!data.success) {
         console.error("Failed to fetch questions. Aborting game start.");
@@ -63,18 +61,21 @@ const startGame = async (req, res) => {
         score: 0,
         timer: setTimeout(() => handleGameEnd(userId, gameId), gameDuration),
     };
-
+    
     res.status(201).json({
         message: "Game Started Successfully",
         gameId: gameId,
-        data
+        questions: data.questions,
+        topic: data.topic
     });
 };
 
 // End the game session manually
 const endGame = (req, res) => {
-    const { userId, gameId, score } = req.body;
-    const gameDetails = getGameDetailsFromUserId(userId);
+    const userId = req.user.userId;
+    const { gameId, score } = req.body;
+    console.log("received response : ",req.body)
+    const gameDetails = userGameMap[userId];
 
     if (!gameDetails || gameDetails.gameId !== gameId) {
         return res.status(400).json({ error: "Invalid game session." });

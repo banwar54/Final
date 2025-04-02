@@ -8,7 +8,8 @@ import Friends from '../pages/Friends.jsx';
 import Arena from '../pages/Arena.jsx';
 import Login from '../pages/Login.jsx';
 import Registration from '../pages/Registration.jsx';
-import Queue from '../pages/Queue.jsx';
+import Quiz1 from '../pages/Quiz1.jsx';
+import Quiz2 from '../pages/Quiz2.jsx';
 import Challenges from '../pages/Challenges.jsx';
 import ChallengeDisplay from '../pages/ChallengeDisplay.jsx';
 
@@ -45,7 +46,8 @@ function Approutes() {
         <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
         <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
         <Route path="/arena" element={<ProtectedRoute><Arena /></ProtectedRoute>} />
-        <Route path="/queue" element={<ProtectedRoute><Queue /></ProtectedRoute>} />
+        <Route path="/quiz1" element={<ProtectedRoute><Quiz1 /></ProtectedRoute>} />
+        <Route path="/quiz2" element={<ProtectedRoute><Quiz2 /></ProtectedRoute>} />
         <Route path="/challenge" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
         <Route path="/showchallenge" element={<ProtectedRoute><ChallengeDisplay /></ProtectedRoute>} />
 

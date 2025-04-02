@@ -54,10 +54,10 @@ const getTwoPlayerLeaderboard =async() =>{
 }
 
 // Save Single Player Data
-const saveSinglePlayerSession=async (gameId, player1, result) =>{
+const saveSinglePlayerSession=async (gameId, playerid, result) =>{
     await postgres`
-        INSERT INTO sessionspec1 (game_id, user1id, result) 
-        VALUES (${gameId}, ${player1}, ${result});
+        INSERT INTO sessionspec1 (gameid, userid, result) 
+        VALUES (${gameId}, ${playerid}, ${result});
     `;
 }
 

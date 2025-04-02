@@ -25,6 +25,16 @@ const Arena = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
   };
+  
+  const SoloGame = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You need to log in first!");
+      navigate("/login");
+      return;
+    }
+    navigate("/quiz1");
+  };
 
   const joinQueue = () => {
     const token = localStorage.getItem("token");
@@ -33,7 +43,7 @@ const Arena = () => {
       navigate("/login");
       return;
     }
-    navigate("/queue");
+    navigate("/quiz2");
   };
 
   return (
@@ -94,7 +104,7 @@ const Arena = () => {
         <div className="content">
           <h1 className="title">WELCOME TO THE BATTLES OF THE QUIZ LORDS</h1>
           <div className="button-container">
-            <button className="game-button" onClick={joinQueue}>Solo Game</button>
+            <button className="game-button" onClick={SoloGame}>Solo Game</button>
             <button className="game-button" onClick={joinQueue}>Multiplayer Game</button>
           </div>
         </div>

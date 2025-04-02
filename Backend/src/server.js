@@ -6,10 +6,11 @@ const { Server } = require("socket.io");
 
 const authRoutes = require("../routes/authRoutes")
 const leaderboardRoutes = require("../routes/leaderboardRoutes")
-const questionRoutes = require("../routes/quesRoutes")                   // will be remove after /queue is created
+const quiz1Routes = require("../routes/quiz1Routes");
 const quiz2Routes = require("../routes/quiz2Routes");
 const challengeRoutes = require("../routes/challengeRoutes");
 const friendRoutes = require("../routes/friendRoutes");
+
 const { setSocketIo, setupGameEndHandler } = require("../controllers/quiz2Controller");
 const { checkConnection } = require("../config/db");
 
@@ -35,11 +36,12 @@ app.set("io", io);
 
 // Routes
 app.use("/auth", authRoutes);
-app.use("/leaderboard",leaderboardRoutes)
-app.use("/question",questionRoutes)         // will be remove after /queue is created
-app.use("/quiz2",quiz2Routes)
-app.use("/challenge",challengeRoutes)
-app.use("/friend",friendRoutes)
+app.use("/leaderboard",leaderboardRoutes);
+app.use("/quiz2",quiz2Routes);
+app.use("/quiz1",quiz1Routes);
+app.use("/challenge",challengeRoutes);
+app.use("/friend",friendRoutes);
+
 // Base Route
 app.get("/", (req, res) => {
     res.send("Welcome to QUIZ Backend");
