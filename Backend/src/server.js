@@ -9,6 +9,7 @@ const leaderboardRoutes = require("../routes/leaderboardRoutes")
 const questionRoutes = require("../routes/quesRoutes")                   // will be remove after /queue is created
 const quiz2Routes = require("../routes/quiz2Routes");
 const challengeRoutes = require("../routes/challengeRoutes");
+const friendRoutes = require("../routes/friendRoutes");
 const { setupGameEvents } = require("../controllers/quiz2Controller");
 const { checkConnection } = require("../config/db");
 
@@ -41,6 +42,7 @@ app.use("/leaderboard",leaderboardRoutes)
 app.use("/question",questionRoutes)         // will be remove after /queue is created
 app.use("/quiz2",quiz2Routes)
 app.use("/challenge",challengeRoutes)
+app.use("/friend",friendRoutes)
 // Base Route
 app.get("/", (req, res) => {
     res.send("Welcome to QUIZ Backend");

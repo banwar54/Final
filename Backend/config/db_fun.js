@@ -88,6 +88,18 @@ const  getChallengebyPalyer = async (userid)=>{
     `;
 }
 
+const findUsers = async () => {
+    return await postgres`
+        SELECT * FROM "userhistory2" uh
+        JOIN "users" u ON uh.userid = u.id ;
+    `;
+};
+
+const acceptFriend = async (userid) =>{
+    await postgres`INSERT INTO createchallenge (que, qo1,qo2,qo3,qo4,qans,userid) 
+    VALUES (${que}, ${qo1}, ${qo2}, ${qo3} , ${qo4} , ${qans} , ${userid});`;
+}
+
 module.exports = { 
     createUser,
     findUserByUsername,
@@ -99,5 +111,6 @@ module.exports = {
     saveTwoPlayerSession,
     saveChallenge,
     getChallenge,
-    getChallengebyPalyer
+    getChallengebyPalyer,
+    findUsers
  };

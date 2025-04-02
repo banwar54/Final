@@ -11,6 +11,7 @@ const Friends = () => {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("friends"); // Default to friends list
   const [searchQuery, setSearchQuery] = useState("");
+  const [suggestedUsers, setSuggestedUsers] = useState([]);
   const location = useLocation();
 
   useEffect(() => {
@@ -48,6 +49,18 @@ const Friends = () => {
         setPendingRequests([
           { userid: "6", username: "QuizChampion", sentAt: "2023-04-15" },
           { userid: "7", username: "MindGamer", sentAt: "2023-04-14" }
+        ]);
+        
+        // Mock data for suggested users
+        setSuggestedUsers([
+          { userid: "8", username: "PuzzleMaster", points: 3200, status: "online" },
+          { userid: "9", username: "QuizGenius", points: 2800, status: "offline" },
+          { userid: "10", username: "BrainiacsClub", points: 3500, status: "online" },
+          { userid: "11", username: "TriviaGuru", points: 2100, status: "away" },
+          { userid: "12", username: "MindChallenger", points: 2700, status: "online" },
+          { userid: "13", username: "KnowledgeHunter", points: 1900, status: "offline" },
+          { userid: "14", username: "FactsExpert", points: 2450, status: "online" },
+          { userid: "15", username: "WisdomSeeker", points: 1750, status: "offline" }
         ]);
       } finally {
         setIsLoading(false);
@@ -93,11 +106,13 @@ const Friends = () => {
     setPendingRequests(pendingRequests.filter(request => request.userid !== userId));
   };
 
-  const sendFriendRequest = () => {
+  const sendFriendRequest = (username = searchQuery) => {
     // Implementation for sending friend request
-    console.log(`Sent friend request to ${searchQuery}`);
-    alert(`Friend request sent to ${searchQuery}`);
-    setSearchQuery("");
+    console.log(`Sent friend request to ${username}`);
+    alert(`Friend request sent to ${username}`);
+    if (username === searchQuery) {
+      setSearchQuery("");
+    }
   };
 
   const removeFriend = (userId) => {
@@ -108,6 +123,10 @@ const Friends = () => {
 
   const filteredFriends = friends.filter(friend => 
     friend.username.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredSuggestedUsers = suggestedUsers.filter(user => 
+    user.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const getStatusColor = (status) => {
@@ -307,21 +326,69 @@ const Friends = () => {
                 <div className="search-container">
                   <input 
                     type="text" 
-                    placeholder="Enter username to add a friend..." 
+                    placeholder="Search users to add as friend..." 
                     value={searchQuery}
                     onChange={handleSearch}
                     className="add-friend-input"
                   />
                   <button 
                     className="send-request-button"
-                    onClick={sendFriendRequest}
+                    onClick={() => sendFriendRequest()}
                     disabled={!searchQuery.trim()}
                   >
-                    Send Request
+                    Search
                   </button>
                 </div>
+                
+                <div className="suggested-users">
+                  <h3 className="suggested-title">
+                    {searchQuery ? `Search Results for "${searchQuery}"` : "Suggested Users"}
+                  </h3>
+                  
+                  <div className="table-container">
+                    {filteredSuggestedUsers.length > 0 ? (
+                      <table className="table">
+                        <thead>
+                          <tr>
+                            <th>Username</th>
+                            <th>Status</th>
+                            <th>Points</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredSuggestedUsers.map((user) => (
+                            <tr key={user.userid}>
+                              <td className="username-cell">
+                                <div className="friend-info">
+                                  <span className="status-dot" style={{ backgroundColor: getStatusColor(user.status) }}></span>
+                                  {user.username}
+                                </div>
+                              </td>
+                              <td>{user.status.charAt(0).toUpperCase() + user.status.slice(1)}</td>
+                              <td>{user.points}</td>
+                              <td>
+                                <button 
+                                  className="action-button add"
+                                  onClick={() => sendFriendRequest(user.username)}
+                                >
+                                  Add Friend
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    ) : searchQuery ? (
+                      <div className="no-results">No users found matching "{searchQuery}"</div>
+                    ) : (
+                      <div className="no-results">No suggested users available</div>
+                    )}
+                  </div>
+                </div>
+                
                 <p className="add-friend-info">
-                  Enter a username to send a friend request. They will need to accept your request before they appear in your friends list.
+                  Search for users by username or browse the suggested users list. Send a friend request to connect with other players.
                 </p>
               </div>
             )}
