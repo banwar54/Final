@@ -17,6 +17,14 @@ const findUserByUsername = async (username) => {
     `;
 };
 
+const update_log_date = async(userid,date)=>{
+    await postgres`
+        UPDATE lastlogin
+        SET date=${date}
+        WHERE userid=${userid};    
+    `
+}
+
 // Function to get Topic
 const getTopicById = async (topicId) => {
     return postgres`
@@ -195,6 +203,7 @@ const removeFriend = async (userid1,userid2) =>{
 module.exports = { 
     createUser,
     findUserByUsername,
+    update_log_date,
     getTopicById,
     getQuestionsById,
     getSinglePlayerLeaderboard,

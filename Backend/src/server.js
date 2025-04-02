@@ -10,6 +10,7 @@ const quiz1Routes = require("../routes/quiz1Routes");
 const quiz2Routes = require("../routes/quiz2Routes");
 const challengeRoutes = require("../routes/challengeRoutes");
 const friendRoutes = require("../routes/friendRoutes");
+const profileRoutes = require("../routes/profileRouter");
 
 const { setSocketIo, setupGameEndHandler } = require("../controllers/quiz2Controller");
 const { checkConnection } = require("../config/db");
@@ -41,6 +42,7 @@ app.use("/quiz2",quiz2Routes);
 app.use("/quiz1",quiz1Routes);
 app.use("/challenge",challengeRoutes);
 app.use("/friend",friendRoutes);
+app.use("/profile",profileRoutes);
 
 // Base Route
 app.get("/", (req, res) => {

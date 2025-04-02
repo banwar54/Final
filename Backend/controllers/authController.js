@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
-const { createUser, findUserByUsername } = require("../config/db_fun");
+const { createUser, findUserByUsername, update_log_date } = require("../config/db_fun");
 
 dotenv.config();
 
@@ -52,6 +52,8 @@ const login = async (req, res) => {
 
         // Generate JWT Token
         const token = jwt.sign({ userId: user[0].id, username: user[0].username }, SECRET_KEY, { expiresIn: "1h" });
+        const today = new Date().toISOString().split('T')[0];
+        await update_log_date(user[0].id,today);
 
         res.status(200).json({ 
             message: "Login successful!",
