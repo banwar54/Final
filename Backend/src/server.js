@@ -10,7 +10,7 @@ const questionRoutes = require("../routes/quesRoutes")                   // will
 const quiz2Routes = require("../routes/quiz2Routes");
 const challengeRoutes = require("../routes/challengeRoutes");
 const friendRoutes = require("../routes/friendRoutes");
-const { setupGameEvents } = require("../controllers/quiz2Controller");
+const { setSocketIo, setupGameEndHandler } = require("../controllers/quiz2Controller");
 const { checkConnection } = require("../config/db");
 
 dotenv.config();
@@ -33,9 +33,6 @@ app.use(cors({ origin: "*", credentials: true }));
 // Store io instance in app for controllers to use
 app.set("io", io);
 
-// Import game events
-setupGameEvents(io);
-
 // Routes
 app.use("/auth", authRoutes);
 app.use("/leaderboard",leaderboardRoutes)
@@ -46,6 +43,15 @@ app.use("/friend",friendRoutes)
 // Base Route
 app.get("/", (req, res) => {
     res.send("Welcome to QUIZ Backend");
+});
+
+setSocketIo(io);
+
+// Handle player disconnections
+io.on("connection", (socket) => {
+    console.log(`Player connected: ${socket.id}`);
+
+    setupGameEndHandler(socket);
 });
 
 // Check database connection before starting the server

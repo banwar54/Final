@@ -1,21 +1,20 @@
 const { getTopicById, getQuestionsById } = require("../config/db_fun");
 
 // Generate a topic id and get corresonding data
-const fetchTopicData = async () => {
+const fetchTopicData = async (topicId) => {
     try {
-        const topicId = (Math.floor(Math.random() * 5) + 1).toString();
         console.log(`Fetching data for Topic ID: ${topicId}`);
 
-        const topic = await getTopicById(topicId);
-        const questions = await getQuestionsById(topicId);
+        const topic = await getTopicById(topicId) || [];
+        const questions = await getQuestionsById(topicId) || [];
 
-        if (!topic || topic.length === 0 || !questions || questions.length === 0) {
+        if (topic.length === 0 || questions.length === 0) {
             return {
                 success: false,
                 message: "Topic or questions not found.",
                 topicId,
-                topic: topic || null,
-                questions: questions || null,
+                topic: topic,
+                questions: questions,
             };
         }
 
