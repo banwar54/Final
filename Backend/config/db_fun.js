@@ -36,7 +36,7 @@ const getQuestionsById = async (topicId) => {
 // get single Player Leaderboard
 const getSinglePlayerLeaderboard =async() =>{
     return postgres`
-        SELECT uh.userid, u.username, uh.points
+        SELECT uh.userid, u.username, uh.total, uh.points
         FROM "userhistory1" uh
         JOIN "users" u ON uh.userid = u.id
         ORDER BY uh.points DESC;

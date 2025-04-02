@@ -215,7 +215,7 @@ const Leaderboard = () => {
                         }}>
                           <td>{index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1)}</td>
                           <td>{player.username}</td>
-                          <td>{player.gamesPlayed || (player.win + player.loss + player.draw)}</td>
+                          <td>{player.total}</td>
                           <td>{player.points}</td>
                         </tr>
                       ))
