@@ -1,4 +1,4 @@
-const { findUsers } = require("../config/db_fun");
+const { findUsers  } = require("../config/db_fun");
 
 const add_friend = async (req,res) => {
     try {
