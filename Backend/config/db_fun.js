@@ -55,25 +55,27 @@ const getTwoPlayerLeaderboard =async() =>{
 
 // Save Single Player Data
 const saveSinglePlayerSession=async (gameId, player1, result) =>{
-    postgres`
-            INSERT INTO sessionspec1 (game_id, user1id, result) 
-            VALUES (${gameId}, ${player1}, ${result});
-        `;
+    await postgres`
+        INSERT INTO sessionspec1 (game_id, user1id, result) 
+        VALUES (${gameId}, ${player1}, ${result});
+    `;
 }
 
 // Save Two Player Data
 const saveTwoPlayerSession=async (gameId, player1, player2, result) =>{
-    postgres`
-    INSERT INTO sessionspec2 (game_id, user1id, user2id, result) 
-            VALUES (${gameId}, ${player1}, ${player2}, ${result});
-        `;
+    await postgres`
+        INSERT INTO sessionspec2 (game_id, user1id, user2id, result) 
+        VALUES (${gameId}, ${player1}, ${player2}, ${result});
+    `;
 }
 
 //saving new qestions 
 
 const saveChallenge = async (userid,que,qo1,qo2,qo3,qo4,qans) =>{
-    await postgres`INSERT INTO createchallenge (que, qo1,qo2,qo3,qo4,qans,userid) 
-    VALUES (${que}, ${qo1}, ${qo2}, ${qo3} , ${qo4} , ${qans} , ${userid});`;
+    await postgres`
+        INSERT INTO createchallenge (que, qo1,qo2,qo3,qo4,qans,userid) 
+        VALUES (${que}, ${qo1}, ${qo2}, ${qo3} , ${qo4} , ${qans} , ${userid});
+    `;
 }
 
 const  getChallenge = async ()=>{
@@ -96,8 +98,10 @@ const findUsers = async () => {
 };
 
 const acceptFriend = async (userid) =>{
-    await postgres`INSERT INTO createchallenge (que, qo1,qo2,qo3,qo4,qans,userid) 
-    VALUES (${que}, ${qo1}, ${qo2}, ${qo3} , ${qo4} , ${qans} , ${userid});`;
+    await postgres`
+        INSERT INTO createchallenge (que, qo1,qo2,qo3,qo4,qans,userid) 
+        VALUES (${que}, ${qo1}, ${qo2}, ${qo3} , ${qo4} , ${qans} , ${userid});
+    `;
 }
 
 module.exports = { 
