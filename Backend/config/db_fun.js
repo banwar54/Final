@@ -93,16 +93,94 @@ const  getChallengebyPalyer = async (userid)=>{
 const findUsers = async () => {
     return await postgres`
         SELECT * FROM "userhistory2" uh
-        JOIN "users" u ON uh.userid = u.id ;
+        JOIN "users" u ON uh.userid = u.id join "frienddisplay" f on f.user1id=u.id 
+        where f.isbool = 0
+        ORDER by u.id;
     `;
 };
 
-const acceptFriend = async (userid) =>{
+const addFriend = async (userid1,userid2) =>{
     await postgres`
-        INSERT INTO createchallenge (que, qo1,qo2,qo3,qo4,qans,userid) 
-        VALUES (${que}, ${qo1}, ${qo2}, ${qo3} , ${qo4} , ${qans} , ${userid});
+        INSERT INTO friendreq (user1id,user2id) 
+        VALUES (${userid1} , ${userid2});
+    `;
+    await postgres`
+        UPDATE frienddisplay
+            SET isbool = 1
+            WHERE user1id=${userid1} and user2id = ${userid2};
     `;
 }
+
+const showFriendreq = async (userid1) =>{
+    await postgres`
+        Select * from friendreq fr Join users u on u.id = fr.user2id 
+        where fr.user2id = ${userid1};
+    `;
+}
+
+const acceptFriend = async (userid1,userid2) => {
+    await postgres`
+        INSERT INTO friend (user1id,user2id) 
+        VALUES (${userid1} , ${userid2});
+    `;
+    await postgres`
+        INSERT INTO friend (user1id,user2id) 
+        VALUES (${userid2} , ${userid1});
+    `;
+    await postgres`
+        UPDATE frienddisplay
+            SET isbool = 1
+            WHERE user1id=${userid1} and user2id = ${userid2};
+    `;
+    await postgres`
+        UPDATE frienddisplay
+            SET isbool = 1
+            WHERE user1id=${userid2} and user2id = ${userid1};
+    `;
+}
+
+const rejectFriend = async(userid1,userid2) =>{
+    await postgres`
+         DELETE FROM friendreq
+         WHERE user1id=${userid2} and user2id = ${userid1};
+    `;
+    await postgres`
+        UPDATE frienddisplay
+            SET isbool = 0
+            WHERE user1id=${userid2} and user2id = ${userid1};
+    `;
+}
+
+const displayFriend = async (userid1) => {
+    await postgres`
+        Select * from users u join friend f on f.user2id = u.id join userhistory2
+        uh on uh.userid= u.id 
+        where f.user1id =${userid1};
+    `;
+}
+
+const removeFriend = async (userid1,userid2) =>{
+    await postgres`
+         DELETE FROM friend
+         WHERE user1id=${userid2} and user2id = ${userid1};
+    `;
+    await postgres`
+         DELETE FROM friend
+         WHERE user1id=${userid1} and user2id = ${userid2};
+    `;
+
+    await postgres`
+        UPDATE frienddisplay
+            SET isbool = 0
+            WHERE user1id=${userid1} and user2id = ${userid2};
+    `;
+    await postgres`
+        UPDATE frienddisplay
+            SET isbool = 0
+            WHERE user1id=${userid2} and user2id = ${userid1};
+    `;
+}
+
 
 module.exports = { 
     createUser,
@@ -116,5 +194,12 @@ module.exports = {
     saveChallenge,
     getChallenge,
     getChallengebyPalyer,
-    findUsers
+    findUsers,
+    addFriend,
+    acceptFriend,
+    showFriendreq,
+    rejectFriend,
+    removeFriend,
+    displayFriend
+
  };
