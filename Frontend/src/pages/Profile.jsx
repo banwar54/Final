@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Slide } from "@mui/material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend
+  PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend
 } from "recharts";
 
 // Import assets
@@ -43,9 +42,20 @@ const Profile = () => {
 
   const userDetails = {
     username: "Player123",
-    points: "100",
+    points: "15",
     matchesPlayed: 50,
   };
+
+  // Determine badge based on points
+  const getBadge = (points) => {
+    const pointsNum = parseInt(points);
+    if (pointsNum >= 50) return { type: "Gold", color: "#FFD700" };
+    if (pointsNum >= 30) return { type: "Silver", color: "#C0C0C0" };
+    if (pointsNum >= 10) return { type: "Bronze", color: "#CD7F32" };
+    return { type: "None", color: "transparent" };
+  };
+
+  const userBadge = getBadge(userDetails.points);
 
   const pieData = [
     { name: "Wins", value: 10 },
@@ -53,13 +63,14 @@ const Profile = () => {
     { name: "Ties", value: 3 },
   ];
 
-  const barData = [
-    { category: "Easy", frequency: 12 },
-    { category: "Medium", frequency: 18 },
-    { category: "Hard", frequency: 7 },
+  // Updated data for solo vs multiplayer games
+  const gameTypeData = [
+    { name: "Solo", value: 20 },
+    { name: "Multiplayer", value: 30 }
   ];
 
   const COLORS = ["#4caf50", "#f44336", "#ff9800"];
+  const GAME_TYPE_COLORS = ["#3498db", "#9b59b6"];
 
   return (
     <div className="containerStyles">
@@ -87,10 +98,7 @@ const Profile = () => {
             <li><Link to="/friends" className="nav-link">🤝 Friends</Link></li>
             <li><Link to="/leaderboard" className="nav-link">🏆 Leaderboard</Link></li>
             <li><Link to="/rules" className="nav-link">📜 Rules</Link></li>
-                          
-            </ul>
-            
-          
+          </ul>
         </nav>
       </div>
 
@@ -100,7 +108,25 @@ const Profile = () => {
             <div className="userAvatarContainerStyles">
               <img src={logo} alt="User Avatar" className="userAvatarStyles" />
             </div>
-            <h2 className="userNameStyles">{userDetails.username}</h2>
+            <div className="userNameBadgeContainer" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+              <h2 className="userNameStyles">{userDetails.username}</h2>
+              {userBadge.type !== "None" && (
+                <div 
+                  className="badgeStyles" 
+                  style={{ 
+                    backgroundColor: userBadge.color,
+                    color: userBadge.type === "Gold" ? "#000" : "#fff",
+                    padding: "4px 8px", 
+                    borderRadius: "12px",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    border: "2px solid rgba(255,255,255,0.3)"
+                  }}
+                >
+                  {userBadge.type}
+                </div>
+              )}
+            </div>
             <div className="userDetailsContainerStyles">
               <div className="userDetailItemStyles">
                 <span className="userDetailLabelStyles">Points:</span>
@@ -141,19 +167,25 @@ const Profile = () => {
                 </div>
                 
                 <div className="chartCardStyles">
-                  <h3 className="chartTitleStyles">Question Difficulty</h3>
+                  <h3 className="chartTitleStyles">Game Types</h3>
                   <ResponsiveContainer width="100%" height={220}>
-                    <BarChart data={barData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.2)" />
-                      <XAxis dataKey="category" stroke="white" />
-                      <YAxis stroke="white" />
-                      <Tooltip 
-                        contentStyle={{ backgroundColor: 'rgba(20, 20, 20, 0.9)', border: 'none', borderRadius: '5px' }}
-                        labelStyle={{ color: 'white' }}
-                      />
-                      <Legend wrapperStyle={{ color: 'white' }} />
-                      <Bar dataKey="frequency" name="Questions Answered" fill="#ff9800" />
-                    </BarChart>
+                    <PieChart>
+                      <Pie
+                        data={gameTypeData}
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={70}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label={({name, value}) => `${name}: ${value} games`}
+                      >
+                        {gameTypeData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={GAME_TYPE_COLORS[index % GAME_TYPE_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value) => [`${value} games`, null]} />
+                      <Legend />
+                    </PieChart>
                   </ResponsiveContainer>
                 </div>
               </div>

@@ -240,9 +240,9 @@ const Friends = () => {
                       <thead>
                         <tr>
                           <th>Username</th>
-                          <th>Status</th>
-                          <th>Last Active</th>
+                          <th></th>
                           <th>Points</th>
+                          <th></th>
                           <th>Actions</th>
                         </tr>
                       </thead>
@@ -255,13 +255,11 @@ const Friends = () => {
                                 {friend.username}
                               </div>
                             </td>
-                            <td>{friend.status.charAt(0).toUpperCase() + friend.status.slice(1)}</td>
-                            <td>{friend.lastActive}</td>
+                            <td></td>
                             <td>{friend.points}</td>
+                            <td></td>
                             <td>
                               <div className="action-buttons">
-                                <button className="action-button invite">Challenge</button>
-                                <button className="action-button message">Message</button>
                                 <button 
                                   className="action-button remove"
                                   onClick={() => removeFriend(friend.userid)}
@@ -287,7 +285,8 @@ const Friends = () => {
                       <thead>
                         <tr>
                           <th>Username</th>
-                          <th>Sent</th>
+                          <th>  </th>
+                          <th></th> 
                           <th>Actions</th>
                         </tr>
                       </thead>
@@ -295,7 +294,8 @@ const Friends = () => {
                         {pendingRequests.map((request) => (
                           <tr key={request.userid}>
                             <td>{request.username}</td>
-                            <td>{request.sentAt}</td>
+                            <td></td>
+                            <td></td>
                             <td>
                               <div className="action-buttons">
                                 <button 
@@ -351,7 +351,7 @@ const Friends = () => {
                         <thead>
                           <tr>
                             <th>Username</th>
-                            <th>Status</th>
+                            <th></th>
                             <th>Points</th>
                             <th>Actions</th>
                           </tr>
@@ -365,7 +365,7 @@ const Friends = () => {
                                   {user.username}
                                 </div>
                               </td>
-                              <td>{user.status.charAt(0).toUpperCase() + user.status.slice(1)}</td>
+                              <td></td>
                               <td>{user.points}</td>
                               <td>
                                 <button 
