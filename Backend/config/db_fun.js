@@ -90,11 +90,13 @@ const  getChallengebyPalyer = async (userid)=>{
     `;
 }
 
-const findUsers = async () => {
+const findUsers = async (userid) => {
     return await postgres`
-        SELECT * FROM "userhistory2" uh
-        JOIN "users" u ON uh.userid = u.id join "frienddisplay" f on f.user1id=u.id 
-        where f.isbool = 0
+        SELECT u.id , u.username , uh.points
+        FROM "userhistory2" uh
+        JOIN "users" u ON uh.userid = u.id 
+        JOIN "frienddisplay" f on u.id = f.user2id
+        where f.isbool = 0 and f.user1id = ${userid}
         ORDER by u.id;
     `;
 };
@@ -112,8 +114,10 @@ const addFriend = async (userid1,userid2) =>{
 }
 
 const showFriendreq = async (userid1) =>{
-    await postgres`
-        Select * from friendreq fr Join users u on u.id = fr.user2id 
+    return await postgres`
+        Select u.id , u.username 
+        from friendreq fr 
+        Join users u on u.id = fr.user1id 
         where fr.user2id = ${userid1};
     `;
 }
@@ -137,6 +141,10 @@ const acceptFriend = async (userid1,userid2) => {
             SET isbool = 1
             WHERE user1id=${userid2} and user2id = ${userid1};
     `;
+    await postgres`
+        DELETE FROM friendreq
+        WHERE user1id=${userid2} and user2id = ${userid1};
+`;
 }
 
 const rejectFriend = async(userid1,userid2) =>{
@@ -152,9 +160,11 @@ const rejectFriend = async(userid1,userid2) =>{
 }
 
 const displayFriend = async (userid1) => {
-    await postgres`
-        Select * from users u join friend f on f.user2id = u.id join userhistory2
-        uh on uh.userid= u.id 
+    return await postgres`
+        Select u.id, u.username, uh.points 
+        from users u 
+        join friend f on f.user2id = u.id 
+        join userhistory2 uh on uh.userid= u.id 
         where f.user1id =${userid1};
     `;
 }
