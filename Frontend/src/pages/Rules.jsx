@@ -93,7 +93,16 @@ const Rules = () => {
               <Typography variant="h3" className="scroll-title">RULES</Typography>
 
               <Box className="rule-list">
-                {["Players join a queue and wait for their turn.", "The first two players in the queue play against each other.", "Each game consists of X questions (e.g., 5-10).", "Players take turns answering questions, with 30 seconds to answer each.", "1 point for each correct answer, 0 points for incorrect answers.", "The player with the most points wins.", "To participate, players must stay in the queue, canceling removes them.", "No cheating, and good sportsmanship is required."].map((rule, index) => (
+                {[
+                  "Players join a queue and wait for their turn.",
+                  "The first two players in the queue play against each other.",
+                  "Each game consists of X questions (e.g., 5-10).",
+                  "Players take turns answering questions, with 30 seconds to answer each.",
+                  "1 point for each correct answer, 0 points for incorrect answers.",
+                  "The player with the most points wins.",
+                  "To participate, players must stay in the queue, canceling removes them.",
+                  "No cheating, and good sportsmanship is required."
+                ].map((rule, index) => (
                   <motion.div key={index} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 * index }}>
                     <Typography variant="body1" className="rule-item">{index + 1}. {rule}</Typography>
                   </motion.div>

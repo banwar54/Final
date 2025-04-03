@@ -85,7 +85,7 @@ const Home = () => {
           
           <div className="background" style={{ backgroundImage: `url(${loginImage})` }}>
             <Slide direction="up" in={showTitle} mountOnEnter unmountOnExit>
-              <div className="title">WELCOME TO THE BATTLES OF THE QUIZ LORDS</div>
+              <div className="title">WELCOME "{localStorage.getItem("username").toUpperCase()}" TO THE BATTLES OF THE QUIZ LORDS</div>
             </Slide>
             <Slide direction="up" in={showButtons} timeout={1000}>
               <div className="button-container">

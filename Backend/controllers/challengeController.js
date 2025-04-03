@@ -22,10 +22,9 @@ const show_challenge = async (req, res) => {
   try {
       const data1 = await getChallengebyPalyer(req.user.userId);
       const data2 = await getChallenge();
-
       
-      console.log(data1);
-      console.log(data2);
+      // console.log(data1);
+      // console.log(data2);
 
       return res.status(200).json({
           message: "Challenges fetched successfully!",

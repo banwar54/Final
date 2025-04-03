@@ -96,7 +96,7 @@ const Login = () => {
 
           <Typography className="login-register-text">
             Don't have an account?{" "}
-            <Link to="/registration" className="login-register-link">
+            <Link to="/register" className="login-register-link">
               Register
             </Link>
           </Typography>

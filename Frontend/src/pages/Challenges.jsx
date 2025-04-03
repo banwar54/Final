@@ -336,7 +336,6 @@ const Challenges = () => {
                     {challenges.map((challenge) => (
                       <div key={challenge.id} className="challenge-card">
                         <div className="challenge-header">
-                          <h3>Challenge #{challenge.id}</h3>
                           <span className="challenge-date">{new Date(challenge.createdAt).toLocaleDateString()}</span>
                         </div>
                         <p className="challenge-question">{challenge.question}</p>
