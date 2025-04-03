@@ -14,9 +14,60 @@ import "../styles/Profile.css";
 const Profile = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [showCharts, setShowCharts] = useState(false);
+  const [profileData, setProfileData] = useState({
+    basicInfo: null,
+    pieChartData: null,
+    countMatchData: null,
+    dailyStreak: null,
+    longestStreak: null
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Fetch profile data from API
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        setLoading(true);
+        
+        // Get the authentication token from localStorage
+        const token = localStorage.getItem("token");
+        
+        // Add authorization header with the token
+        const response = await fetch('http://localhost:5000/profile', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        setProfileData({
+          basicInfo: data.basicinfo_data[0],
+          pieChartData: data.PiechartResult_data[0],
+          countMatchData: data.CountMatch_data[0],
+          dailyStreak: data.dailystreak_data[0],
+          longestStreak: data.longeststreak_data[0]
+        });
+        
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching profile data:", err);
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+  
+    fetchProfileData();
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token"); // Remove the authentication token
@@ -40,12 +91,6 @@ const Profile = () => {
     setSidebarOpen(!isSidebarOpen);
   };
 
-  const userDetails = {
-    username: "Player123",
-    points: "15",
-    matchesPlayed: 50,
-  };
-
   // Determine badge based on points
   const getBadge = (points) => {
     const pointsNum = parseInt(points);
@@ -55,22 +100,52 @@ const Profile = () => {
     return { type: "None", color: "transparent" };
   };
 
-  const userBadge = getBadge(userDetails.points);
+  // Prepare chart data from API response
+  const preparePieData = () => {
+    if (!profileData.pieChartData) return [];
+    
+    return [
+      { name: "Wins", value: parseInt(profileData.pieChartData.win) || 0 },
+      { name: "Losses", value: parseInt(profileData.pieChartData.loss) || 0 },
+      { name: "Ties", value: parseInt(profileData.pieChartData.draw) || 0 },
+    ];
+  };
 
-  const pieData = [
-    { name: "Wins", value: 10 },
-    { name: "Losses", value: 5 },
-    { name: "Ties", value: 3 },
-  ];
-
-  // Updated data for solo vs multiplayer games
-  const gameTypeData = [
-    { name: "Solo", value: 20 },
-    { name: "Multiplayer", value: 30 }
-  ];
+  const prepareGameTypeData = () => {
+    if (!profileData.countMatchData) return [];
+    
+    return [
+      { name: "Solo", value: parseInt(profileData.countMatchData.single) || 0 },
+      { name: "Multi", value: parseInt(profileData.countMatchData.double) || 0 }
+    ];
+  };
 
   const COLORS = ["#4caf50", "#f44336", "#ff9800"];
   const GAME_TYPE_COLORS = ["#3498db", "#9b59b6"];
+
+  if (loading) {
+    return (
+      <div className="loadingContainer">
+        <h2>Loading profile data...</h2>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="errorContainer">
+        <h2>Error loading profile data</h2>
+        <p>{error}</p>
+      </div>
+    );
+  }
+
+  const userBadge = profileData.basicInfo ? 
+    getBadge(profileData.basicInfo.point2) : 
+    { type: "None", color: "transparent" };
+
+  const pieData = preparePieData();
+  const gameTypeData = prepareGameTypeData();
 
   return (
     <div className="containerStyles">
@@ -88,7 +163,7 @@ const Profile = () => {
       <div className="sidebarStyles" style={{ transform: isSidebarOpen ? "translateX(0)" : "translateX(-100%)" }}>
         <div className="sidebarHeaderStyles">
           <img src={logo} alt="Profile" className="profileImgStyles" />
-          <h3>{userDetails.username}</h3>
+          <h3>{profileData.basicInfo ? profileData.basicInfo.username : "User"}</h3>
         </div>
         <nav>
           <ul className="nav-list">
@@ -109,7 +184,7 @@ const Profile = () => {
               <img src={logo} alt="User Avatar" className="userAvatarStyles" />
             </div>
             <div className="userNameBadgeContainer" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
-              <h2 className="userNameStyles">{userDetails.username}</h2>
+              <h2 className="userNameStyles">{profileData.basicInfo ? profileData.basicInfo.username : "User"}</h2>
               {userBadge.type !== "None" && (
                 <div 
                   className="badgeStyles" 
@@ -130,11 +205,37 @@ const Profile = () => {
             <div className="userDetailsContainerStyles">
               <div className="userDetailItemStyles">
                 <span className="userDetailLabelStyles">Points:</span>
-                <span className="userDetailValueStyles">{userDetails.points}</span>
+                <span className="userDetailValueStyles">
+                  {profileData.basicInfo ? profileData.basicInfo.point2 : "0"}
+                </span>
               </div>
               <div className="userDetailItemStyles">
                 <span className="userDetailLabelStyles">Matches:</span>
-                <span className="userDetailValueStyles">{userDetails.matchesPlayed}</span>
+                <span className="userDetailValueStyles">
+                  {profileData.basicInfo ? profileData.basicInfo.totalgames : "0"}
+                </span>
+              </div>
+            </div>
+            
+            {/* Streak display section */}
+            <div className="streakContainerStyles">
+              <div className="streakItemStyles current-streak">
+                <div className="streakIconStyles">🔥</div>
+                <div className="streakContentStyles">
+                  <span className="streakLabelStyles">Current Streak</span>
+                  <span className="streakValueStyles">
+                    {profileData.dailyStreak ? profileData.dailyStreak.streak : "0"} days
+                  </span>
+                </div>
+              </div>
+              <div className="streakItemStyles longest-streak">
+                <div className="streakIconStyles">⚡</div>
+                <div className="streakContentStyles">
+                  <span className="streakLabelStyles">Longest Streak</span>
+                  <span className="streakValueStyles">
+                    {profileData.longestStreak ? profileData.longestStreak.streak : "0"} days
+                  </span>
+                </div>
               </div>
             </div>
           </div>

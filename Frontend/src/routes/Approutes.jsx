@@ -12,6 +12,7 @@ import Quiz1 from '../pages/Quiz1.jsx';
 import Quiz2 from '../pages/Quiz2.jsx';
 import Challenges from '../pages/Challenges.jsx';
 import ChallengeDisplay from '../pages/ChallengeDisplay.jsx';
+import Feedback from '../pages/Feedback.jsx';
 
 // Authentication check function
 const getCookie = (name) => {
@@ -50,6 +51,7 @@ function Approutes() {
         <Route path="/quiz2" element={<ProtectedRoute><Quiz2 /></ProtectedRoute>} />
         <Route path="/challenge" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
         <Route path="/showchallenge" element={<ProtectedRoute><ChallengeDisplay /></ProtectedRoute>} />
+        <Route path="/Feedback" element={<ProtectedRoute><Feedback/></ProtectedRoute>} />
 
         {/* Fallback Route */}
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -144,7 +144,7 @@ const ChallengeDisplay = () => {
               </Link>
             </li>
             <li>
-              <Link to="/challenge-display" className={`nav-link ${location.pathname === "/challenge-display" ? "active" : ""}`}>
+              <Link to="/showchallenge" className={`nav-link ${location.pathname === "/showchallenge" ? "active" : ""}`}>
                 <span className="icon">🎮</span> Play Challenges
               </Link>
             </li>

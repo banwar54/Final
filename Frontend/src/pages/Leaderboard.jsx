@@ -95,7 +95,7 @@ const Leaderboard = () => {
       <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
         <div className="sidebar-header">
           <img src={Logo} alt="Profile" className="profile-img" />
-          <h3>John Doe</h3>
+          <h3>{localStorage.getItem("username")}</h3>
         </div>
         <nav>
           <ul className="nav-list">

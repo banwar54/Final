@@ -62,7 +62,7 @@ const Arena = () => {
       <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
         <div className="sidebar-header">
           <img src={logo} alt="Profile" className="profile-img" />
-          <h3>CONTROLS</h3>
+          <h3>{localStorage.getItem("username")}</h3>
         </div>
         <nav>
           <ul className="nav-list">

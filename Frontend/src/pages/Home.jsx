@@ -61,24 +61,24 @@ const Home = () => {
               <div className="title-logo">QUIZENA</div>
             </div>
             <nav className="nav">
-              <Link to="/login" className="signup-button" onClick={handleLogout}>Log Out</Link>
+              <Link to="/login" className="signup-button" onClick={handleLogout} title="">Log Out</Link>
             </nav>
           </header>
           
           <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
             <div className="sidebar-header">
               <img src={swordsLogo} alt="Profile" className="profile-img" />
-              <h3>CONTROLS</h3>
+              <h3>{localStorage.getItem("username")}</h3>
             </div>
             <nav>
               <ul className="nav-list">
-                <li><Link to="/" className={`nav-link ${location.pathname === "/" ? "active" : ""}`}>🏠 Home</Link></li>
-                <li><Link to="/arena" className="nav-link">⚔️ Enter Arena</Link></li>
-                <li><Link to="/profile" className="nav-link">👤 Profile</Link></li>
-                <li><Link to="/friends" className="nav-link">🤝 Friends</Link></li>
-                <li><Link to="/leaderboard" className="nav-link">🏆 Leaderboard</Link></li>
-                <li><Link to="/rules" className="nav-link">📜 Rules</Link></li>
-                
+                <li><Link to="/" className={`nav-link ${location.pathname === "/" ? "active" : ""}`} title="">🏠 Home</Link></li>
+                <li><Link to="/arena" className="nav-link" title="">⚔️ Enter Arena</Link></li>
+                <li><Link to="/profile" className="nav-link" title="">👤 Profile</Link></li>
+                <li><Link to="/friends" className="nav-link" title="">🤝 Friends</Link></li>
+                <li><Link to="/leaderboard" className="nav-link" title="">🏆 Leaderboard</Link></li>
+                <li><Link to="/rules" className="nav-link" title="">📜 Rules</Link></li>
+                <li><Link to="/feedback" className="nav-link text-truncate" title="">📝 Feedback</Link></li>
               </ul>
             </nav>
           </div>
@@ -109,6 +109,7 @@ const HoverButton = ({ to, children }) => {
       className={`button ${hover ? "hover" : ""}`}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
+      title=""
     >
       {children}
     </Link>

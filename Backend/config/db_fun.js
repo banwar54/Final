@@ -199,6 +199,12 @@ const removeFriend = async (userid1,userid2) =>{
     `;
 }
 
+const giveFeedback=async (fedbck) =>{
+    await postgres`
+        INSERT INTO feedback (fedbck) 
+        VALUES (${fedbck});
+    `;
+}
 
 module.exports = { 
     createUser,
@@ -219,6 +225,7 @@ module.exports = {
     showFriendreq,
     rejectFriend,
     removeFriend,
-    displayFriend
+    displayFriend,
+    giveFeedback
 
  };
