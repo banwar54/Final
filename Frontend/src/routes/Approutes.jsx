@@ -15,7 +15,7 @@ import ChallengeDisplay from '../pages/ChallengeDisplay.jsx';
 import Feedback from '../pages/Feedback.jsx';
 
 // Authentication check function
-const getCookie = (name) => {
+const getCookie = () => {
   return localStorage.getItem("token");
 };
 
