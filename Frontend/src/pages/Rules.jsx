@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../styles/Rules.css";
 
@@ -12,11 +12,37 @@ import scrollBg from "../images/scroll.png";
 const Rules = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem("token"); // Remove the authentication token
-  };
+  const handleLogout = async () => {
+    const token = localStorage.getItem("token");
+    if (!token){
+      navigate("/login");
+      return;
+    }
+    try {
+      const response = await fetch("http://localhost:5000/auth/logout", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
   
+      if (response.status === 200) {
+        console.log("Logout logged successfully");
+      } else if (response.status === 401 || response.status === 403) {
+        console.warn("Token expired or invalid, still clearing localStorage");
+      } else {
+        console.warn("Unexpected logout response:", response.status);
+      }
+    } catch (error) {
+      console.error("Logout request failed:", error);
+    } finally {
+      // Clear the token in all cases
+      localStorage.removeItem("token");
+      navigate("/login"); 
+    }
+  };  
 
   useEffect(() => {
     setSidebarOpen(false);
@@ -40,7 +66,7 @@ const Rules = () => {
         <img src={logo} alt="Logo" className="logo" />
         <h1 className="navbar-title">QUIZENA</h1>
         <nav className="nav">
-           <Link to="/login" onClick={handleLogout} className="signup-button">Log Out</Link>
+          <button className="signup-button" onClick={handleLogout} title="">Log Out</button>
         </nav>  
       </header>
 

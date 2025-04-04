@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Slide } from "@mui/material";
 import swordsLogo from "../images/swords.jpg";
 import loginImage from "../images/Login.jpg";
@@ -8,14 +8,40 @@ import "../styles/Home.css";
 const Home = () => {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
-  
+  const navigate = useNavigate();
   const [showTitle, setShowTitle] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
 
-  const handleLogout = () => {
-    localStorage.removeItem("token"); // Remove the authentication token
+  const handleLogout = async () => {
+    const token = localStorage.getItem("token");
+    if (!token){
+      navigate("/login");
+      return;
+    }
+    try {
+      const response = await fetch("http://localhost:5000/auth/logout", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (response.status === 200) {
+        console.log("Logout logged successfully");
+      } else if (response.status === 401 || response.status === 403) {
+        console.warn("Token expired or invalid, still clearing localStorage");
+      } else {
+        console.warn("Unexpected logout response:", response.status);
+      }
+    } catch (error) {
+      console.error("Logout request failed:", error);
+    } finally {
+      // Clear the token in all cases
+      localStorage.removeItem("token");
+      navigate("/login"); 
+    }
   };
   
   // Animation effects for homepage
@@ -60,7 +86,7 @@ const Home = () => {
               <div className="title-logo">QUIZENA</div>
             </div>
             <nav className="nav">
-              <Link to="/login" className="signup-button" onClick={handleLogout} title="">Log Out</Link>
+              <button className="signup-button" onClick={handleLogout} title="">Log Out</button>
             </nav>
           </header>
           

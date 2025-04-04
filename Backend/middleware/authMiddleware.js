@@ -26,7 +26,7 @@ const authenticateUser = (req, res, next) => {
         const decoded = jwt.verify(token, SECRET_KEY);
         req.user = decoded;
 
-        logger.info(`User authenticated successfully. UserID=${decoded.userId}`);
+        // logger.info(`User authenticated successfully. UserID=${decoded.userId}`);
         next();
     } catch (error) {
         if (error.name === "TokenExpiredError") {

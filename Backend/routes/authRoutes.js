@@ -1,6 +1,7 @@
 const express = require("express");
 const { signup, login } = require("../controllers/authController");
-const logger = require("../config/loki"); // Adjust path as needed
+const logger = require("../config/loki");
+const { authenticateUser } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
@@ -42,6 +43,13 @@ router.post("/login", async (req, res, next) => {
         logger.error(`POST /auth/login - Error: ${error.message}`);
         res.status(500).json({ error: "Internal Server Error" });
     }
+});
+
+// Log Logout
+router.post("/logout", authenticateUser, (req, res) => {
+    const userId = req.user?.userId;
+    logger.info(`User logged out. UserID=${userId}`);
+    return res.status(200).json({ message: "User logged out" });
 });
 
 module.exports = router;

@@ -168,7 +168,7 @@ const startGame = async () => {
 
         const data = await fetchTopicData(topicId.toString());
 
-        if (!data.success) {
+        if (!data) {
             logger.error("Failed to fetch topic details, aborting game start");
             gameInProgress = false;
             waitingQueue.unshift(activePlayers[1]);

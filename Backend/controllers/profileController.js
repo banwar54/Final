@@ -11,11 +11,11 @@ const getProfile = async (req, res) => {
     const userId = req.user.userId;
 
     const profileData = {
-        piechartResult: [],
-        countMatch: [],
-        basicInfo: [],
-        dailyStreak: 1,
-        longestStreak: 1
+        PiechartResult_data: [],
+        CountMatch_data: [],
+        basicinfo_data: [],
+        dailystreak_data: 1,
+        longeststreak_data: 1
     };
 
     try {
@@ -33,11 +33,11 @@ const getProfile = async (req, res) => {
             longeststreak(userId).catch(error => { throw { source: "longestStreak", error }; })
         ]);
 
-        profileData.piechartResult = piechartResult || [];
-        profileData.countMatch = countMatch || [];
-        profileData.basicInfo = basicInfo || [];
-        profileData.dailyStreak = dailyStreak || 1;
-        profileData.longestStreak = longestStreak || 1;
+        profileData.PiechartResult_data = piechartResult || [];
+        profileData.CountMatch_data = countMatch || [];
+        profileData.basicinfo_data = basicInfo || [];
+        profileData.dailystreak_data = dailyStreak || 1;
+        profileData.longeststreak_data = longestStreak || 1;
 
         logger.info(`Profile data fetched for user: ${userId}`);
         console.log(`All profile data successfully fetched for user: ${userId}`);
