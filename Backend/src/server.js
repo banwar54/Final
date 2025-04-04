@@ -4,8 +4,9 @@ const http = require("http");
 const cors = require("cors");
 const { Server } = require("socket.io");
 
-const authRoutes = require("../routes/authRoutes");
-const leaderboardRoutes = require("../routes/leaderboardRoutes");
+const { monitorMiddleware} = require("../middleware/monitorMiddleware");
+const authRoutes = require("../routes/authRoutes")
+const leaderboardRoutes = require("../routes/leaderboardRoutes")
 const quiz1Routes = require("../routes/quiz1Routes");
 const quiz2Routes = require("../routes/quiz2Routes");
 const challengeRoutes = require("../routes/challengeRoutes");
@@ -13,6 +14,7 @@ const friendRoutes = require("../routes/friendRoutes");
 const profileRoutes = require("../routes/profileRouter");
 const fedbckRoutes = require("../routes/fedbckRoutes");
 const pingRoutes = require("../routes/pingRoutes")
+const metricsRoutes = require("../routes/promRoutes");
 
 const logger = require("../config/loki");
 const { setSocketIo, setupGameEndHandler } = require("../controllers/quiz2Controller");
@@ -37,6 +39,9 @@ app.use(cors({ origin: "*", credentials: true }));
 // Attach socket.io instance to app
 app.set("io", io);
 
+//Monitoring via middleware
+app.use(monitorMiddleware);
+
 // Routes
 app.use("/auth", authRoutes);
 app.use("/leaderboard", leaderboardRoutes);
@@ -47,6 +52,7 @@ app.use("/friend", friendRoutes);
 app.use("/profile", profileRoutes);
 app.use("/feedback", fedbckRoutes);
 app.use("/ping",pingRoutes);
+app.use("/metrics",metricsRoutes);
 
 // Base Route
 app.get("/", (req, res) => {
