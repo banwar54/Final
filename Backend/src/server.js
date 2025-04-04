@@ -4,6 +4,7 @@ const http = require("http");
 const cors = require("cors");
 const { Server } = require("socket.io");
 
+const { monitorMiddleware} = require("../middleware/monitorMiddleware");
 const authRoutes = require("../routes/authRoutes")
 const leaderboardRoutes = require("../routes/leaderboardRoutes")
 const quiz1Routes = require("../routes/quiz1Routes");
@@ -12,6 +13,7 @@ const challengeRoutes = require("../routes/challengeRoutes");
 const friendRoutes = require("../routes/friendRoutes");
 const profileRoutes = require("../routes/profileRouter");
 const fedbckRoutes = require("../routes/fedbckRoutes");
+const metricsRoutes = require("../routes/promRoutes");
 
 const { setSocketIo, setupGameEndHandler } = require("../controllers/quiz2Controller");
 const { checkConnection } = require("../config/db");
@@ -36,6 +38,9 @@ app.use(cors({ origin: "*", credentials: true }));
 // Store io instance in app for controllers to use
 app.set("io", io);
 
+//Monitoring via middleware
+app.use(monitorMiddleware);
+
 // Routes
 app.use("/auth", authRoutes);
 app.use("/leaderboard",leaderboardRoutes);
@@ -45,6 +50,7 @@ app.use("/challenge",challengeRoutes);
 app.use("/friend",friendRoutes);
 app.use("/profile",profileRoutes);
 app.use("/feedback",fedbckRoutes);
+app.use("/metrics",metricsRoutes);
 
 // Base Route
 app.get("/", (req, res) => {
