@@ -1,32 +1,47 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
-const { createUser, findUserByUsername, update_log_date } = require("../config/db_fun");
+const logger = require("../config/loki");
+const {
+    createUser,
+    findUserByUsername,
+    update_log_date,
+} = require("../config/db_fun");
 
 dotenv.config();
 
 const SECRET_KEY = process.env.JWT_SECRET || "needs_to_be_changed";
 
-// Signup Fucntion
+// Signup Function
 const signup = async (req, res) => {
     try {
         const { username, email, password } = req.body;
+
         if (!username || !email || !password) {
-            return { error: "All fields are required" };
+            logger.warn("Signup attempt with incomplete details");
+            return res.status(400).json({ message: "All fields are required" });
         }
 
-        // Check if user already exists
         const existingUser = await findUserByUsername(username);
         if (existingUser.length > 0) {
+            logger.warn(`Signup failed - Username already exists: ${username}`);
             return res.status(400).json({ message: "User already exists!" });
         }
 
-        // Hash password before storing
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await createUser(username, email, hashedPassword);
-        res.status(201).json({ message: "User registered successfully!", user: newUser });
+
+        logger.info(`User registered: [${username}, ${email}]`);
+        res.status(201).json({
+            message: "User registered successfully!",
+            user: newUser,
+        });
     } catch (error) {
-        res.status(500).json({ message: "Error registering user", error });
+        logger.error(`Signup failed: ${error.message}`);
+        res.status(500).json({
+            message: "Error registering user",
+            error: error.message,
+        });
     }
 };
 
@@ -34,39 +49,47 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { username, password } = req.body;
+
         if (!username || !password) {
+            logger.warn("Login attempt with incomplete credentials");
             return res.status(400).json({ message: "All fields are required" });
         }
 
-        // Check if user exists
         const user = await findUserByUsername(username);
         if (user.length === 0) {
-            return res.status(400).json({ message: "User not found!" });
+            logger.warn(`Login failed - User not found: ${username}`);
+            return res.status(404).json({ message: "User not found!" });
         }
 
-        // Validate password
         const isValid = await bcrypt.compare(password, user[0].password);
         if (!isValid) {
-            return res.status(400).json({ message: "Invalid credentials!" });
+            logger.warn(`Login failed - Invalid password for user: ${username}`);
+            return res.status(401).json({ message: "Invalid credentials!" });
         }
 
-        // Generate JWT Token
-        const token = jwt.sign({ userId: user[0].id, username: user[0].username }, SECRET_KEY, { expiresIn: "1h" });
-        const today = new Date().toISOString().split('T')[0];
-        await update_log_date(user[0].id,today);
+        const token = jwt.sign(
+            { userId: user[0].id, username: user[0].username },
+            SECRET_KEY,
+            { expiresIn: "1h" }
+        );
 
-        res.status(200).json({ 
+        const today = new Date().toISOString().split("T")[0];
+        await update_log_date(user[0].id, today);
+
+        logger.info(`User logged in: ${username}`);
+        res.status(200).json({
             message: "Login successful!",
             token,
-            user: { 
+            user: {
                 username: user[0].username,
-                email: user[0].email
-            }
+                email: user[0].email,
+            },
         });
     } catch (error) {
+        logger.error(`Login failed: ${error.message}`);
         res.status(500).json({
             message: "Error logging in",
-            error
+            error: error.message,
         });
     }
 };

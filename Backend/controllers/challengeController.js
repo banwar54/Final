@@ -1,43 +1,54 @@
-const { saveChallenge , getChallenge , getChallengebyPalyer} = require("../config/db_fun");
+const { saveChallenge, getChallenge, getChallengebyPlayer } = require("../config/db_fun");
+const logger = require("../config/loki");
 
 const save_Challenge = async (req, res) => {
   try {
-    
-    const data = req.body
-    if (!data) {
-      return res.status(400).json({ message: 'Question and all options are required!' });
+    const { que, qo1, qo2, qo3, qo4, qans } = req.body;
+
+    if (!que || !qo1 || !qo2 || !qo3 || !qo4 || !qans) {
+      logger.warn(`User [${req.user.userId}] tried saving a challenge with incomplete data.`);
+      return res.status(400).json({
+        message: "Question and all options are required!",
+      });
     }
-    
-    await saveChallenge(req.user.userId,data.que, data.qo1, data.qo2, data.qo3, data.qo4, data.qans);
-    
-    res.status(201).json({ message: "Challenge created successfully!"});
-    
+
+    await saveChallenge(req.user.userId, que, qo1, qo2, qo3, qo4, qans);
+
+    logger.info(`User [${req.user.userId}] created a new challenge: "${que}"`);
+    return res.status(201).json({
+      message: "Challenge created successfully!",
+    });
+
   } catch (error) {
-    console.error("Error saving challenge:", error);
-    res.status(500).json({ message: "Error saving challenge", error: error.message });
+    logger.error(`Error saving challenge for user [${req.user.userId}]: ${error.message}`);
+    return res.status(500).json({
+      message: "Error saving challenge",
+      error: error.message,
+    });
   }
 };
 
 const show_challenge = async (req, res) => {
   try {
-      const data1 = await getChallengebyPalyer(req.user.userId);
-      const data2 = await getChallenge();
-      
-      // console.log(data1);
-      // console.log(data2);
+    const [playerChallenges, allChallenges] = await Promise.all([
+      getChallengebyPlayer(req.user.userId),
+      getChallenge(),
+    ]);
 
-      return res.status(200).json({
-          message: "Challenges fetched successfully!",
-          ChallengebyPlayer: data1.length > 0 ? data1 : [],
-          Challenge: data2.length > 0 ? data2 : [],
-      });
+    logger.info(`Challenges fetched successfully for user [${req.user.userId}]`);
+
+    return res.status(200).json({
+      message: "Challenges fetched successfully!",
+      ChallengebyPlayer: playerChallenges || [],
+      Challenge: allChallenges || [],
+    });
 
   } catch (error) {
-      console.error("Database Error:", error);
-      return res.status(500).json({
-          message: "Database error occurred.",
-          error: error.message,
-      });
+    logger.error(`Error fetching challenges for user [${req.user.userId}]: ${error.message}`);
+    return res.status(500).json({
+      message: "Database error occurred.",
+      error: error.message,
+    });
   }
 };
 

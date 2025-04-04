@@ -29,7 +29,6 @@ const Friends = ({ userId }) => {
 
     const handleLogout = () => {
       localStorage.removeItem("token");
-      navigate("/login");
     };
     
     // Add useEffect to refresh possibleFriends when a friend is removed

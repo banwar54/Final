@@ -13,10 +13,9 @@ const Rules = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
-    const handleLogout = () => {
-      localStorage.removeItem("token"); // Remove the authentication token
-      navigate("/login"); // Redirect to the login page
-    };
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Remove the authentication token
+  };
   
 
   useEffect(() => {
@@ -103,8 +102,15 @@ const Rules = () => {
                   "To participate, players must stay in the queue, canceling removes them.",
                   "No cheating, and good sportsmanship is required."
                 ].map((rule, index) => (
-                  <motion.div key={index} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 * index }}>
-                    <Typography variant="body1" className="rule-item">{index + 1}. {rule}</Typography>
+                  <motion.div 
+                    key={index} 
+                    initial={{ opacity: 0, x: -20 }} 
+                    animate={{ opacity: 1, x: 0 }} 
+                    transition={{ duration: 0.8, delay: 0.2 * index }}
+                  >
+                    <Typography variant="body1" className="rule-item">
+                      {index + 1}. {rule}
+                    </Typography>
                   </motion.div>
                 ))}
               </Box>

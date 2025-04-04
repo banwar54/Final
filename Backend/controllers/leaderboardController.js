@@ -1,25 +1,23 @@
-const { getSinglePlayerLeaderboard, getTwoPlayerLeaderboard } = require("../config/db_fun")
+const { getSinglePlayerLeaderboard, getTwoPlayerLeaderboard } = require("../config/db_fun");
+const logger = require("../config/loki");
 
 // Function to fetch leaderboard data
 const get_leaderBoard = async (req, res) => {
     try {
-        const data1 = await getSinglePlayerLeaderboard();
-        const data2 = await getTwoPlayerLeaderboard();
+        const leaderboardSingle = await getSinglePlayerLeaderboard() || [];
+        const leaderboardTwoPlayer = await getTwoPlayerLeaderboard() || [];
 
-        // Debugging logs (will be remove later)
-        // console.log("Leaderboard1:", data1);
-        // console.log("Leaderboard2:", data2);
+        logger.info("Leaderboard fetched successfully.");
 
         return res.status(200).json({
             message: "Leaderboard fetched successfully!",
-            leaderboard1: data1.length > 0 ? data1 : [],
-            leaderboard2: data2.length > 0 ? data2 : [],
+            leaderboard1: leaderboardSingle,
+            leaderboard2: leaderboardTwoPlayer,
         });
-
     } catch (error) {
-        console.error("Database Error:", error);
+        logger.error(`Failed to fetch leaderboard: ${error.message}`);
         return res.status(500).json({
-            message: "Database error occurred.",
+            message: "An error occurred while fetching leaderboard data.",
             error: error.message,
         });
     }

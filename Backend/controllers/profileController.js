@@ -1,3 +1,4 @@
+const logger = require("../config/loki");
 const { 
     PiechartResult,
     basicinfo,
@@ -8,16 +9,16 @@ const {
 
 const getProfile = async (req, res) => {
     const userId = req.user.userId;
-    let data = {
-        PiechartResult_data: [],
-        CountMatch_data: [],
-        basicinfo_data: [],
-        dailystreak_data: 1,
-        longeststreak_data: 1
+
+    const profileData = {
+        piechartResult: [],
+        countMatch: [],
+        basicInfo: [],
+        dailyStreak: 1,
+        longestStreak: 1
     };
 
     try {
-        // Run all async calls in parallel
         const [
             piechartResult,
             countMatch,
@@ -27,27 +28,32 @@ const getProfile = async (req, res) => {
         ] = await Promise.all([
             PiechartResult(userId).catch(error => { throw { source: "PiechartResult", error }; }),
             CountMatch(userId).catch(error => { throw { source: "CountMatch", error }; }),
-            basicinfo(userId).catch(error => { throw { source: "basicinfo", error }; }),
-            dailystreak(userId).catch(error => { throw { source: "dailystreak", error }; }),
-            longeststreak(userId).catch(error => { throw { source: "longeststreak", error }; })
+            basicinfo(userId).catch(error => { throw { source: "basicInfo", error }; }),
+            dailystreak(userId).catch(error => { throw { source: "dailyStreak", error }; }),
+            longeststreak(userId).catch(error => { throw { source: "longestStreak", error }; })
         ]);
 
-        // Assign fetched data
-        data.PiechartResult_data = piechartResult;
-        data.CountMatch_data = countMatch;
-        data.basicinfo_data = basicInfo;
-        data.dailystreak_data = dailyStreak;
-        data.longeststreak_data = longestStreak;
+        profileData.piechartResult = piechartResult || [];
+        profileData.countMatch = countMatch || [];
+        profileData.basicInfo = basicInfo || [];
+        profileData.dailyStreak = dailyStreak || 1;
+        profileData.longestStreak = longestStreak || 1;
 
-        console.log(`All profile data successfully fetched for ${userId}`);
+        logger.info(`Profile data fetched for user: ${userId}`);
+        console.log(`All profile data successfully fetched for user: ${userId}`);
 
-        return res.status(200).json(data);
+        return res.status(200).json(profileData);
         
-    } catch (error) {
-        console.error(`Error fetching ${error.source} data for ${userId}:`, error.error);
+    } catch (err) {
+        const source = err?.source || "Unknown";
+        const errorMessage = err?.error?.message || "Unexpected error";
+
+        logger.error(`Error fetching ${source} for user ${userId}: ${errorMessage}`);
+        console.error(`Error fetching ${source} for user ${userId}: ${errorMessage}`);
+
         return res.status(500).json({
-            message: `Error fetching ${error.source} data`,
-            error: error.error.message || error.error
+            message: `Error fetching ${source} data`,
+            error: errorMessage
         });
     }
 };

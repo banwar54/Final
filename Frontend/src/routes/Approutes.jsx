@@ -15,8 +15,32 @@ import ChallengeDisplay from '../pages/ChallengeDisplay.jsx';
 import Feedback from '../pages/Feedback.jsx';
 
 // Authentication check function
-const getCookie = (name) => {
+const getCookie = () => {
   return localStorage.getItem("token");
+};
+
+const ping = async () => {
+  const token = getCookie(); // Assuming getCookie() retrieves the JWT
+
+  if (!token) return;
+
+  try {
+    const response = await fetch("http://localhost:5000/ping", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.status === 401 || response.status === 403) {
+      console.log("Expired or invalid token, clearing...");
+      localStorage.removeItem("token");
+    } else if (response.ok) {
+      console.log("Token is valid");
+    }
+  } catch (error) {
+    console.error("Ping fetch error:", error);
+  }
 };
 
 const isAuthenticated = () => {
@@ -31,6 +55,8 @@ const PublicRoute = ({ children }) => {
 const ProtectedRoute = ({ children }) => {
   return isAuthenticated() ? children : <Navigate to="/login" replace />;
 };
+
+await ping();
 
 function Approutes() {
   return (

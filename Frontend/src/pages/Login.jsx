@@ -29,7 +29,7 @@ const Login = () => {
         throw new Error(data.error || "Login failed");
       }
 
-      console.log("Login Successful:", data);
+      console.log("Login Successful:");
       localStorage.setItem("token", data.token);
       localStorage.setItem("username", data.user.username);
 

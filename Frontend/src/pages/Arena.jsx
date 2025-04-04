@@ -10,7 +10,6 @@ const Arena = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token"); // Remove the authentication token
-    navigate("/login"); // Redirect to the login page
   };
 
   useEffect(() => {

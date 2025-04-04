@@ -19,7 +19,6 @@ const Challenges = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/login");
   };
 
   // Fetch challenges from API
