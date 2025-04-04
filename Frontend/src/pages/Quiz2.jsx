@@ -334,25 +334,28 @@ const Quiz2 = () => {
   }
 
   return (
-    <div className="main-content-styles">
-      <div className="content-styles">
-        <h1 className="title-styles">THE ARENA AWAITS ..</h1>
-
-        {InQueue && <div className="spinner"></div>}
-        {InQueue && <p className="message-styles">You are in queue, please wait....</p>}
-
-        <div className="button-container">
-          {
-            <button
-              className="exit-queue-button"
-              onClick={() => {
-                leaveQueue();
-                navigate("/arena");
-              }}
-            >
-              Exit Queue
-            </button>
-          }
+    <div className="pageWrapper">
+      <div className="container">
+      <div className="overlay"></div>
+        <div className="quizCard">
+          <h1 className="title-styles">THE ARENA AWAITS ..</h1>
+    
+          {InQueue && <div className="spinner"></div>}
+          {InQueue && <p className="message-styles">You are in queue, please wait....</p>}
+    
+          <div className="button-container">
+            {
+              <button
+                className="exit-queue-button"
+                onClick={() => {
+                  leaveQueue();
+                  navigate("/arena");
+                }}
+              >
+                Exit Queue
+              </button>
+            }
+          </div>
         </div>
       </div>
     </div>
