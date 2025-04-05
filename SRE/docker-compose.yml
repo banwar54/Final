@@ -1,6 +1,12 @@
 version: '3'
 
 services:
+  backend:
+    image: backend:latest
+    container_name: quiz-backend
+    ports:
+      - "5000:5000"
+      
   prometheus:
     image: prom/prometheus
     container_name: prometheus      #imp
