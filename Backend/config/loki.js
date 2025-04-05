@@ -6,7 +6,7 @@ const options = {
         labels:{
             app_name:"quiz_backend",
         },
-        host: "http://localhost:3100"
+        host: "http://loki:3100"
     })
   ]
  };
