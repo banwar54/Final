@@ -1,0 +1,36 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "type": "dashboard",
+          "name": "Annotations & Alerts",
+          "enable": true
+        }
+      ]
+    },
+    "panels": [
+      {
+        "type": "graph",
+        "title": "Prometheus Target Scrapes",
+        "targets": [
+          {
+            "expr": "up",
+            "legendFormat": "{{instance}}",
+            "refId": "A"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 0, "w": 24, "h": 9 },
+        "id": 1
+      }
+    ],
+    "schemaVersion": 30,
+    "version": 1,
+    "title": "Prometheus Overview",
+    "uid": "prometheus-overview",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    }
+  }
+  
