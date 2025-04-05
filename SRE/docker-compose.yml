@@ -7,7 +7,15 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    
+
+  loki:
+    image: grafana/loki
+    container_name: loki    #imp
+    ports:
+      - "3100:3100"
+    
 
   grafana:
     image: grafana/grafana
