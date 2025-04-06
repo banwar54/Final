@@ -27,7 +27,7 @@ pipeline {
         stage('Run Docker Compose') {
             steps {
                 dir('SRE') {
-                    sh 'docker-compose up -d'
+                    sh 'docker compose up -d'
                 }
             }
         }
