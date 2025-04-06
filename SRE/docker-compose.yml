@@ -11,7 +11,7 @@ services:
     image: frontend:latest
     container_name: quiz-frontend
     ports:
-      - "5000:5000"
+      - "5174:5174"
       
   prometheus:
     image: prom/prometheus
