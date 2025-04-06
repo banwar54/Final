@@ -6,7 +6,7 @@ import {
 } from "recharts";
 
 // Import assets
-import logo from "../images/swords.jpg";
+import logo from "@images/swords.jpg";
 
 // Import styles
 import "../styles/Profile.css";

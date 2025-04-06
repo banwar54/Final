@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Slide } from "@mui/material";
-import swordsLogo from "../images/swords.jpg";
-import loginImage from "../images/Login.jpg";
+import swordsLogo from "@images/swords.jpg";
+import loginImage from "@images/Login.jpg";
 import "../styles/Home.css";
 
 const Home = () => {

@@ -142,7 +142,6 @@
     bottom: 0;
     display: flex;
     flex-direction: column;
-    background-image: url("../assets/dashboard.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

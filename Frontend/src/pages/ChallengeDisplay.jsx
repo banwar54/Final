@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import Logo from "../images/swords.jpg";
+import Logo from "@images/swords.jpg";
 import "../styles/ChallengeDisplay.css";
 
 const ChallengeDisplay = () => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import Logo from "../images/swords.jpg";
+import Logo from "@images/swords.jpg";
 import "../styles/Friends.css";
 
 const Friends = ({ userId }) => {

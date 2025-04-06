@@ -18,7 +18,7 @@
     align-items: center;
     height: 100%;
     width: 100%;
-    background-image: url("../images/quiz.jpeg");
+    background-image: url("@images/quiz.jpeg");
     background-size: cover;
     background-position: center;
     position: relative;

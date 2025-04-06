@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quiz-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quiz-frontend
+  template:
+    metadata:
+      labels:
+        app: quiz-frontend
+    spec:
+      containers:
+        - name: quiz-frontend
+          image: frontend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5174
+          resources:
+            requests:
+              cpu: "100m"
+            limits:
+              cpu: "200m"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: quiz-frontend
+spec:
+  selector:
+    app: quiz-frontend
+  ports:
+    - protocol: TCP
+      port: 5174
+      targetPort: 5174

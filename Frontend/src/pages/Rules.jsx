@@ -5,9 +5,9 @@ import { motion } from "framer-motion";
 import "../styles/Rules.css";
 
 // Import assets
-import logo from "../images/swords.jpg";
-import rulesBg from "../images/rulesbg.jpg";
-import scrollBg from "../images/scroll.png";
+import logo from "@images/swords.jpg";
+import rulesBg from "@images/rulesbg.jpg";
+import scrollBg from "@images/scroll.png";
 
 const Rules = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
