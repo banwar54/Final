@@ -17,6 +17,13 @@ const findUserByUsername = async (username) => {
     `;
 };
 
+const findUserByEmail = async (email) => {
+    return postgres`
+        SELECT * FROM users
+        WHERE email = ${email};
+    `;
+};
+
 // Function to Log LastLogin Date
 const update_log_date = async(userid,date)=>{
     await postgres`
@@ -222,6 +229,7 @@ module.exports = {
     update_log_date,
     getTopicById,
     getQuestionsById,
+    findUserByEmail,
     getSinglePlayerLeaderboard,
     getTwoPlayerLeaderboard,
     saveSinglePlayerSession,

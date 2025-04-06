@@ -5,6 +5,7 @@ const logger = require("../config/loki");
 const {
     createUser,
     findUserByUsername,
+    findUserByEmail,
     update_log_date,
 } = require("../config/db_fun");
 
@@ -18,14 +19,19 @@ const signup = async (req, res) => {
         const { username, email, password } = req.body;
 
         if (!username || !email || !password) {
-            logger.warn("Signup attempt with incomplete details");
+            logger.error("Signup attempt with incomplete details");
             return res.status(400).json({ message: "All fields are required" });
         }
 
         const existingUser = await findUserByUsername(username);
         if (existingUser.length > 0) {
-            logger.warn(`Signup failed - Username already exists: ${username}`);
-            return res.status(400).json({ message: "User already exists!" });
+            logger.error(`Signup failed - Username already exists: ${username}`);
+            return res.status(400).json({ message: "Username already exists!" });
+        }
+        const existingEmail = await findUserByEmail(email);
+        if (existingEmail.length > 0) {
+            logger.error(`Signup failed - Email already exists: ${username}`);
+            return res.status(400).json({ message: "User Email already exists!" });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -51,19 +57,19 @@ const login = async (req, res) => {
         const { username, password } = req.body;
 
         if (!username || !password) {
-            logger.warn("Login attempt with incomplete credentials");
+            logger.error("Login attempt with incomplete credentials");
             return res.status(400).json({ message: "All fields are required" });
         }
 
         const user = await findUserByUsername(username);
         if (user.length === 0) {
-            logger.warn(`Login failed - User not found: ${username}`);
+            logger.error(`Login failed - User not found: ${username}`);
             return res.status(404).json({ message: "User not found!" });
         }
 
         const isValid = await bcrypt.compare(password, user[0].password);
         if (!isValid) {
-            logger.warn(`Login failed - Invalid password for user: ${username}`);
+            logger.error(`Login failed - Invalid password for user: ${username}`);
             return res.status(401).json({ message: "Invalid credentials!" });
         }
 

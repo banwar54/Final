@@ -1,9 +1,15 @@
-version: '3'
+version: '1'
 
 services:
   backend:
     image: backend:latest
     container_name: quiz-backend
+    ports:
+      - "5000:5000"
+
+  frontend:
+    image: frontend:latest
+    container_name: quiz-frontend
     ports:
       - "5000:5000"
       
