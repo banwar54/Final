@@ -56,13 +56,11 @@ const ProtectedRoute = ({ children }) => {
   return isAuthenticated() ? children : <Navigate to="/login" replace />;
 };
 
-// Replace top-level await with IIFE
 (async function() {
   await ping();
 })();
 
 function Approutes() {
-  // Optional: You can also call ping from inside the component using useEffect
   useEffect(() => {
     ping();
   }, []);
