@@ -34,7 +34,10 @@ pipeline {
 
         stage('Start Minikube') {
             steps {
-                sh 'minikube start || echo "Minikube already running"'
+                sh '''
+                minikube stop
+                minikube start || echo "Minikube already running"
+                '''
             }
         }
 
