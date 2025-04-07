@@ -1,4 +1,3 @@
-# Build stage
 FROM node:22.14.0-alpine AS build
 
 WORKDIR /frontend
@@ -6,11 +5,11 @@ WORKDIR /frontend
 # Copy package files
 COPY package.json package-lock.json vite.config.mjs ./
 
-# Install deps including 'serve' locally
+# Install dependencies
 RUN npm install
 RUN npm install serve
 
-# Copy rest of the app
+# Copy code
 COPY . .
 
 # Build the Vite project

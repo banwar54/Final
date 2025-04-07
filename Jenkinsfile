@@ -35,10 +35,10 @@ pipeline {
 
     post {
         success {
-            echo '🎉 Deployment and monitoring setup successful!'
+            echo ' Deployment and monitoring setup successful!'
         }
         failure {
-            echo '❌ Something went wrong. Check the logs.'
+            echo 'Something went wrong. Check the logs.'
         }
     }
 }

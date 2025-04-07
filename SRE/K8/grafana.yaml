@@ -29,6 +29,26 @@ data:
           timescaledb: false
 
 ---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-provider
+data:
+  provider.yaml: |
+    apiVersion: 1
+    providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        updateIntervalSeconds: 10
+        allowUiUpdates: true
+        options:
+          path: /var/lib/grafana/dashboards
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -56,10 +76,20 @@ spec:
           volumeMounts:
             - name: grafana-datasource
               mountPath: /etc/grafana/provisioning/datasources
+            - name: grafana-dashboard-provider  # Add this
+              mountPath: /etc/grafana/provisioning/dashboards
+            - name: grafana-dashboards  # Add this
+              mountPath: /var/lib/grafana/dashboards        
       volumes:
         - name: grafana-datasource
           configMap:
             name: grafana-datasources
+        - name: grafana-dashboard-provider  # Add this
+          configMap:
+            name: grafana-dashboard-provider
+        - name: grafana-dashboards  # Add this
+          configMap:
+            name: grafana-dashboards            
 
 ---
 apiVersion: v1
